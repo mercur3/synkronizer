@@ -12,10 +12,52 @@ def main():
     for i in items:
         print(i)   # TODO os.system(make a link to config folder inside the git repo)
 
+def skip_whitespaces(string: str, start: int) -> int:
+    for i in range(start, len(string)):
+        if string[i] == "\n":
+            return -1
+        if string[i].isalpha():
+            return i
+
+    return len(string)
+
+def word_end(string: str, start: int) -> int:
+    for i in range(start, len(string)):
+        if string[i].isspace():
+            return i
+
+    return len(string)
 
 # TODO should return an Option
 def read_configs():
-    pass
+    keywords = {"home", "config"}
+
+    with open("./config.txt", "r") as fp:
+        for line in fp.readlines():
+            # skip to the beggining first word
+            start_first = skip_whitespaces(line, 0)
+            if start_first != -1:
+                # skip to the end of first word
+                end_first = word_end(line, start_first)
+                if end_first == len(line):
+                    raise KeyError(f"Line: {line}\nContains no parameter for the given variable")
+
+                # read config keyword
+                word1 = line[start_first : end_first].tolower()
+                if word1 not in keywords:
+                    raise KeyError(f"variable '{word1}' not supported")
+
+                # =
+                equals = skip_whitespaces(line, end_first)
+                if equals != -1 or line[equals] != "=":
+                    raise KeyError("Expected '='")
+
+                # skip whitespace
+                start_second = skip_whitespaces(line, equals + 1)
+                end_second = word_end(line, start_second)
+                # read path
+                word2 = line[start_second : end_second]
+                keywords[word1] = word2
 
 if __name__ == "__main__":
     #main()
