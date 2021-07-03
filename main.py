@@ -16,7 +16,7 @@ def skip_whitespaces(string: str, start: int) -> int:
     for i in range(start, len(string)):
         if string[i] == "\n":
             return -1
-        if string[i].isalpha():
+        if not string[i].isspace():
             return i
 
     return len(string)
@@ -30,7 +30,10 @@ def word_end(string: str, start: int) -> int:
 
 # TODO should return an Option
 def read_configs():
-    keywords = {"home", "config"}
+    keywords = {
+        "home" : None,
+        "config" : None
+    }
 
     with open("./config.txt", "r") as fp:
         for line in fp.readlines():
@@ -43,13 +46,13 @@ def read_configs():
                     raise KeyError(f"Line: {line}\nContains no parameter for the given variable")
 
                 # read config keyword
-                word1 = line[start_first : end_first].tolower()
+                word1 = line[start_first : end_first].lower()
                 if word1 not in keywords:
                     raise KeyError(f"variable '{word1}' not supported")
 
                 # =
                 equals = skip_whitespaces(line, end_first)
-                if equals != -1 or line[equals] != "=":
+                if equals == -1 or line[equals] != '=':
                     raise KeyError("Expected '='")
 
                 # skip whitespace
