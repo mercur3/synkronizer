@@ -29,13 +29,13 @@ def word_end(string: str, start: int) -> int:
     return len(string)
 
 # TODO should return an Option
-def read_configs():
+def read_configs(path: str) -> dict:
     keywords = {
         "home" : None,
         "config" : None
     }
 
-    with open("./config.txt", "r") as fp:
+    with open(path, "r") as fp:
         for line in fp.readlines():
             # skip to the beggining first word
             start_first = skip_whitespaces(line, 0)
@@ -62,6 +62,8 @@ def read_configs():
                 word2 = line[start_second : end_second]
                 keywords[word1] = word2
 
+    return keywords
+
 if __name__ == "__main__":
     #main()
     l = len(sys.argv)
@@ -69,4 +71,4 @@ if __name__ == "__main__":
         print(f"the lenght is {l}")
         for i in range(1, l):
             print(sys.argv[i])
-    read_configs()
+    read_configs(os.path.abspath("files/config.txt"))
