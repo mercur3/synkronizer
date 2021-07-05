@@ -28,7 +28,6 @@ def word_end(string: str, start: int) -> int:
 
     return len(string)
 
-# TODO should return an Option
 def read_configs(path: str) -> dict:
     keywords = {
         "home" : None,
@@ -65,10 +64,10 @@ def read_configs(path: str) -> dict:
     return keywords
 
 if __name__ == "__main__":
-    #main()
     l = len(sys.argv)
     if l > 1:
         print(f"the lenght is {l}")
         for i in range(1, l):
             print(sys.argv[i])
+
     read_configs(os.path.abspath("files/config.txt"))
