@@ -1,7 +1,6 @@
 import os
 import sys
 from pathlib import Path
-from options import Options
 
 
 HOME = str(Path.home())
@@ -68,15 +67,29 @@ def link_config(path_config_repo: str):
     for fp in os.listdir(path_config_repo):
         make_symlink(path_config_repo + fp, HOME + "/.config/" + fp)
 
+def run_ln(origin: str, destination: str):
+    os.system(f"ln -s {origin} {destination}")
+
+def run_rm(path: str):
+    os.system(f"rm -r {path}")
+
 def make_symlink(origin: str, destination: str):
+    print(f"Linking {origin} -> {destination}")
     if os.path.exists(destination):
-        print(f"file {origin} already exists")
+        print(f"File {origin} already exists")
+        action = input("Do you want to replace it [y/N]: ").strip()
+        if action == "y" or action == "Y":
+            run_rm(destination)
+            run_ln(origin, destination)
+            print(f"Deleted {destination} and made new symlink")
+        else:
+            print("Not taking any actions")
     else:
-        print(f"todo symlink {origin}")
-    print(destination)
+        run_ln(origin, destination)
 
 if __name__ == "__main__":
-    paths = read_configs(HOME + "/tmp/synKronizer/files/config.txt")
+    paths = read_configs("config.txt")
 
-    link_home(paths["home"])
-    link_config(paths["config"])
+    # link_home(paths["home"])
+    # link_config(paths["config"])
+    make_symlink("/home/andri/test/t1", "/home/andri/t1")
