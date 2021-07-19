@@ -4,13 +4,7 @@ from pathlib import Path
 from options import Options
 
 
-def main():
-    USER_HOME = str(Path.home())                     # get $HOME
-    CONFIG_PATH = USER_HOME + "/tmp/linux-configs"   # path to config folder
-
-    items = list(filter(lambda x: x != ".git", os.listdir(CONFIG_PATH)))  # get all valid items
-    for i in items:
-        print(i)   # TODO os.system(make a link to config folder inside the git repo)
+HOME = str(Path.home())
 
 def skip_whitespaces(string: str, start: int) -> int:
     for i in range(start, len(string)):
@@ -61,13 +55,28 @@ def read_configs(path: str) -> dict:
                 word2 = line[start_second : end_second]
                 keywords[word1] = word2
 
+    keywords["home"] = os.path.expanduser(keywords["home"])
+    keywords["config"] = os.path.expanduser(keywords["config"])
+
     return keywords
 
-if __name__ == "__main__":
-    l = len(sys.argv)
-    if l > 1:
-        print(f"the lenght is {l}")
-        for i in range(1, l):
-            print(sys.argv[i])
+def link_home(path_home_repo: str):
+    for fp in os.listdir(path_home_repo):
+        make_symlink(path_home_repo + fp, HOME + "/" + fp)
 
-    read_configs(os.path.abspath("files/config.txt"))
+def link_config(path_config_repo: str):
+    for fp in os.listdir(path_config_repo):
+        make_symlink(path_config_repo + fp, HOME + "/.config/" + fp)
+
+def make_symlink(origin: str, destination: str):
+    if os.path.exists(destination):
+        print(f"file {origin} already exists")
+    else:
+        print(f"todo symlink {origin}")
+    print(destination)
+
+if __name__ == "__main__":
+    paths = read_configs(HOME + "/tmp/synKronizer/files/config.txt")
+
+    link_home(paths["home"])
+    link_config(paths["config"])
