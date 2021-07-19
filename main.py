@@ -90,6 +90,5 @@ def make_symlink(origin: str, destination: str):
 if __name__ == "__main__":
     paths = read_configs("config.txt")
 
-    # link_home(paths["home"])
-    # link_config(paths["config"])
-    make_symlink("/home/andri/test/t1", "/home/andri/t1")
+    link_home(paths["home"])
+    link_config(paths["config"])
