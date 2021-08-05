@@ -1,2 +1,3 @@
-HOME = ~/tmp/linux-configs/home/
-CONFIG = ~/tmp/linux-configs/config/
+HOME = ~/code/linux-configs/home/
+CONFIG = ~/code/linux-configs/config/
+
