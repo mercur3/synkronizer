@@ -6,8 +6,8 @@ use std::io::BufRead;
 pub use std::path::Path;
 
 pub struct App {
-	home: Box<Path>,
-	config: Box<Path>,
+	pub home: Box<Path>,
+	pub config: Box<Path>,
 }
 
 static HOME_KEYWORD: &str = "home";
@@ -43,13 +43,13 @@ fn parse_file(path: &Path) -> (String, String) {
 			.filter(|x| x.len() != 0)
 			.collect();
 
-		if args.len() == 0 || args[0] == "#" {
+		if args.len() == 0 || args[0].starts_with('#') {
 			continue;
 		}
 		if args.len() != 3 {
 			panic!("Line must have length == 3 or should start with #");
 		}
-		if args[1] == "=" {
+		if args[1] != "=" {
 			panic!("Missing =");
 		}
 
