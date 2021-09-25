@@ -1,0 +1,12 @@
+
+#dsfdsf ;dsf
+HOME = ~/code/linux-configs/home/
+
+#asd
+
+
+CONFIG = ~/code/linux-configs/config/
+
+
+#
+#####

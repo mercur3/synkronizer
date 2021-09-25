@@ -1,0 +1,13 @@
+
+HOME = ~/code/linux-configs/home/
+
+
+
+
+CONFIG = ~/code/linux-configs/config/
+
+#############
+
+          #
+#########3 CONFIG = ~/code/linux-configs/config/
+HOME = ~/code/linux-configs/home/
