@@ -1,3 +1,5 @@
+use synKronizer::*;
+
 fn main() {
-    println!("Hello, world!");
+	App::from_config_file(Path::new("config.txt"));
 }
