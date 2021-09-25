@@ -1,3 +1,4 @@
+# args are not capitalized
 
 hOMe = ~/code/linux-configs/home/
 config = ~/code/linux-configs/config/

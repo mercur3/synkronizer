@@ -1,3 +1,4 @@
+# config with comments + extra \n
 
 #dsfdsf ;dsf
 HOME = ~/code/linux-configs/home/

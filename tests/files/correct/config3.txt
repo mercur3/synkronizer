@@ -1,3 +1,4 @@
+# config with extra whitespace around = and edges
 
 HOME                = ~/code/linux-configs/home/
 
