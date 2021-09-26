@@ -37,7 +37,7 @@ Example:
   + =CONFIG= - which corresponds to =~/.config=.
   # + TODO conflict resolver
 - The right hand side should have a valid path to the directory that we want to sync from.
-- A = = = separates both sides.
+- A ~=~ separates both sides.
 
 # *** conflict resolver
 
