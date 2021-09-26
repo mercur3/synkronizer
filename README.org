@@ -1,0 +1,45 @@
+* synkronizer
+Like GNU Stow but written in Rust.
+** Aim
+Sync config files from a git repo by using symlinks. The program tries to imitate an UNIX like
+directory structure:
+
+#+begin_src
+$HOME
+|
+| --- irrelevant-file-or-dir0
+| --- irrelevant-file-or-dir1
+|     |
+|     | --- sub0
+...
+|     | --- subn
+| --- .config
+|     |
+|     | --- sub0
+...
+|     | --- subn
+...
+| --- irrelevant-file-or-dirn
+#+end_src
+
+Example:
+- Download a repo from Github.
+- Run =synkronizer=.
+- Resolve conflicts, if any.
+
+** Usage
+*** Config file
+- By default uses =./config.txt=.
+- Empty lines (or lines that contain only whitespace characters) and lines that begin with =#=
+  are ignored. This definition extends in [[file:tests/files/correct/config3.txt][this extreme case]] too.
+- The valid options (casing [[file:tests/files/correct/config2.txt][ignored]]) that can appear in the left hand side are:
+  + =HOME= - which corresponds to files and directories inside =~/=, except =~/.config=.
+  + =CONFIG= - which corresponds to =~/.config=.
+  # + TODO conflict resolver
+- The right hand side should have a valid path to the directory that we want to sync from.
+- A === separates both sides.
+
+# *** conflict resolver
+
+** Notes
+1. Files which have [[file:tests/files/correct/config5.txt][spaces in their name]].
