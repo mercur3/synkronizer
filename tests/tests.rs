@@ -1,4 +1,4 @@
-use synKronizer::{App, Path};
+use synkronizer::{App, Path};
 
 #[test]
 fn file_is_correct() {
@@ -20,5 +20,8 @@ fn file_is_correct() {
 fn parses_whitespace_path() {
 	let p = Path::new("./tests/files/correct/config5.txt");
 	let x = App::from_config_file(p);
+
 	assert_eq!(x.config, x.home);
+	assert!(x.home.is_dir());
+	assert!(x.config.is_dir());
 }
