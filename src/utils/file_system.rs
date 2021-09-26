@@ -1,5 +1,5 @@
 pub use std::fs;
-pub use std::path::Path;
+use std::path::PathBuf;
 
 pub fn expand_tilde(s: String) -> String {
 	if s.starts_with('~') {
@@ -8,8 +8,12 @@ pub fn expand_tilde(s: String) -> String {
 	return s;
 }
 
-pub fn to_abs_path(s: String) -> Box<Path> {
-	return fs::canonicalize(expand_tilde(s)).unwrap().into_boxed_path();
+pub fn to_abs_path(s: String) -> PathBuf {
+	// FIXME it is a `hack`
+	// return fs::canonicalize(path).unwrap().into_boxed_path();
+	let mut p = PathBuf::new();
+	p.push(expand_tilde(s));
+	return p;
 }
 
 #[test]

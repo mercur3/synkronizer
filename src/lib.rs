@@ -4,10 +4,11 @@ use std::fs;
 use std::io;
 use std::io::BufRead;
 pub use std::path::Path;
+use std::path::PathBuf;
 
 pub struct App {
-	pub home: Box<Path>,
-	pub config: Box<Path>,
+	pub home: PathBuf,
+	pub config: PathBuf,
 }
 
 static HOME_KEYWORD: &str = "home";
@@ -31,34 +32,34 @@ impl App {
 }
 
 fn parse_file(path: &Path) -> (String, String) {
-	let mut home = String::from("");
-	let mut config = String::from("");
+	let mut home = String::default();
+	let mut config = String::default();
 
 	let file = io::BufReader::new(fs::File::open(path).expect("cannot open file"));
 	for line in file.lines() {
-		let args = line.unwrap();
-
-		let args: Vec<&str> = args
-			.split_ascii_whitespace()
-			.filter(|x| x.len() != 0)
-			.collect();
-
-		if args.len() == 0 || args[0].starts_with('#') {
+		let args = line.unwrap_or_default();
+		let args = args.trim();
+		if args.is_empty() || args.starts_with('#') {
 			continue;
 		}
-		if args.len() != 3 {
-			panic!("Line must have length == 3 or should start with #");
+		let index = args.find('=').expect("Missing =");
+		let left = args[..index].trim().to_lowercase();
+		let right = args[index + 1..].trim().to_lowercase();
+		if left.is_empty() {
+			panic!("Missing left hand side");
 		}
-		if args[1] != "=" {
-			panic!("Missing =");
+		if right.is_empty() {
+			panic!("Missing right hand side");
 		}
 
-		let arg0 = args[0].to_lowercase();
-		if arg0 == crate::HOME_KEYWORD {
-			home = args[2].to_string();
+		if left == crate::HOME_KEYWORD {
+			home = right;
 		}
-		else if arg0 == crate::CONFIG_KEYWORD {
-			config = args[2].to_string();
+		else if left == crate::CONFIG_KEYWORD {
+			config = right;
+		}
+		else {
+			panic!("Unknown keyword");
 		}
 	}
 
