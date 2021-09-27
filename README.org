@@ -24,7 +24,7 @@ $HOME
 #+end_src
 
 Example:
-- Download a repo from Github.
+- Download a repo from GitHub.
 - Run =synkronizer=.
 - Resolve conflicts, if any.
 
