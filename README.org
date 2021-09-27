@@ -6,20 +6,21 @@ directory structure:
 
 #+begin_src
 $HOME
-|
-| --- irrelevant-file-or-dir0
-| --- irrelevant-file-or-dir1
-|     |
-|     | --- sub0
+│
+├── irrelevant-file-or-dir0
+├── irrelevant-file-or-dir1
+│   │
+│   ├── sub0
 ...
-|     | --- subn
-| --- .config
-|     |
-|     | --- sub0
+│   └── subn
+├── .config
+│   │
+│   ├── sub0
 ...
-|     | --- subn
+│   └── subn
 ...
-| --- irrelevant-file-or-dirn
+│
+└── irrelevant-file-or-dirn
 #+end_src
 
 Example:
