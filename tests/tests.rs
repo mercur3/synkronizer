@@ -39,3 +39,17 @@ fn missing_equals_sign() {
 	let p = Path::new("./tests/files/invalid/err2.txt");
 	App::from_config_file(p);
 }
+
+#[test]
+#[should_panic(expected = "No config")]
+fn no_config() {
+	let p = Path::new("./tests/files/invalid/err3.txt");
+	App::from_config_file(p);
+}
+
+#[test]
+#[should_panic(expected = "No home")]
+fn no_home() {
+	let p = Path::new("./tests/files/invalid/err4.txt");
+	App::from_config_file(p);
+}

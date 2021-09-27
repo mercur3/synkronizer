@@ -1,0 +1,3 @@
+# Missing HOME
+
+CONFIG = ~/code/linux-configs/home/
