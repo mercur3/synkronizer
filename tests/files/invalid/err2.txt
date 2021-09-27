@@ -1,0 +1,4 @@
+# Line 4 misses `=`
+
+HOME = ~/code/linux-configs/home/
+CONFIG  ~/code/linux-configs/config/

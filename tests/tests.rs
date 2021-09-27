@@ -32,3 +32,10 @@ fn uknown_keyword() {
 	let p = Path::new("./tests/files/invalid/err1.txt");
 	App::from_config_file(p);
 }
+
+#[test]
+#[should_panic(expected = "Missing `=`")]
+fn missing_equals_sign() {
+	let p = Path::new("./tests/files/invalid/err2.txt");
+	App::from_config_file(p);
+}

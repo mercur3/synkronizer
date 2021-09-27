@@ -40,9 +40,13 @@ fn parse_file(path: &Path) -> (String, String) {
 		if args.is_empty() || args.starts_with('#') {
 			continue;
 		}
-		let index = args.find('=').expect("Missing =");
+
+		let index = args
+			.find('=')
+			.expect(format!("Missing `=`\nLine: {}", args).as_str());
 		let left = args[..index].trim().to_lowercase();
 		let right = args[index + 1..].trim().to_lowercase();
+
 		if left.is_empty() {
 			panic!("Missing left hand side");
 		}
