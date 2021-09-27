@@ -53,3 +53,10 @@ fn no_home() {
 	let p = Path::new("./tests/files/invalid/err4.txt");
 	App::from_config_file(p);
 }
+
+#[test]
+#[should_panic(expected = "No such file or directory")]
+fn invalid_path() {
+	let p = Path::new("./tests/files/invalid/err5.txt");
+	App::from_config_file(p);
+}

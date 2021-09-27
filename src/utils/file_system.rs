@@ -9,11 +9,8 @@ pub fn expand_tilde(s: String) -> String {
 }
 
 pub fn to_abs_path(s: String) -> PathBuf {
-	// FIXME it is a `hack`
-	// return fs::canonicalize(path).unwrap().into_boxed_path();
-	let mut p = PathBuf::new();
-	p.push(expand_tilde(s));
-	return p;
+	let p = expand_tilde(s);
+	return fs::canonicalize(p).unwrap();
 }
 
 #[test]

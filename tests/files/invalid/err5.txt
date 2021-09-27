@@ -1,0 +1,4 @@
+# Path ~/xxx is invalid
+
+HOME = ~/code/linux-configs/home/
+CONFIG = ~/xxx
