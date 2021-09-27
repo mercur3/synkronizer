@@ -1,0 +1,4 @@
+# ABC not known
+
+ABC = ~/code/linux-configs/home/
+CONFIG = ~/code/linux-configs/config/

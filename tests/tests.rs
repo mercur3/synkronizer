@@ -25,3 +25,10 @@ fn parses_whitespace_path() {
 	assert!(x.home.is_dir());
 	assert!(x.config.is_dir());
 }
+
+#[test]
+#[should_panic(expected = "Unknown keyword")]
+fn uknown_keyword() {
+	let p = Path::new("./tests/files/invalid/err1.txt");
+	App::from_config_file(p);
+}

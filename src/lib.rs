@@ -57,6 +57,8 @@ fn parse_file(path: &Path) -> (String, String) {
 			config = right;
 		}
 		else {
+			eprintln!("Keyword {} is not known", left);
+			eprintln!("Line: {}", args);
 			panic!("Unknown keyword");
 		}
 	}
