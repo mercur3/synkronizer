@@ -43,3 +43,5 @@ Example:
 
 ** Notes
 1. Files which have [[file:tests/files/correct/config5.txt][spaces in their name]].
+2. In case when you don't want to sync =~/= or =~/.config= make the corresponding option in
+   config file point to an empty directory.
