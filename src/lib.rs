@@ -1,10 +1,8 @@
 pub mod utils;
 
-use std::fs;
-use std::io;
-use std::io::BufRead;
-pub use std::path::Path;
-use std::path::PathBuf;
+use std::fs::File;
+use std::io::{self, BufRead};
+pub use std::path::{Path, PathBuf};
 
 pub struct App {
 	pub home: PathBuf,
@@ -35,7 +33,7 @@ fn parse_file(path: &Path) -> (String, String) {
 	let mut home = String::default();
 	let mut config = String::default();
 
-	let file = io::BufReader::new(fs::File::open(path).expect("cannot open file"));
+	let file = io::BufReader::new(File::open(path).expect("cannot open file"));
 	for line in file.lines() {
 		let args = line.unwrap_or_default();
 		let args = args.trim();
