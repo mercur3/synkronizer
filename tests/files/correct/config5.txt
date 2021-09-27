@@ -1,2 +1,4 @@
-HOME = ~/code/synkronizer/tests/dirs/dir with spaces/
-CONFIG = ~/code/synkronizer/tests/dirs/dir with spaces/
+# Should work even if there is no space as separator
+
+HOME=~/code/linux-configs/home/
+CONFIG=~/code/linux-configs/config/
