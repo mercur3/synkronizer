@@ -1,3 +1,4 @@
+pub mod resolve;
 pub mod sync;
 pub mod utils;
 
@@ -5,13 +6,13 @@ use std::fs::File;
 use std::io::{self, BufRead};
 pub use std::path::{Path, PathBuf};
 
+const HOME_KEYWORD: &str = "home";
+const CONFIG_KEYWORD: &str = "config";
+
 pub struct App {
 	pub home: PathBuf,
 	pub config: PathBuf,
 }
-
-const HOME_KEYWORD: &str = "home";
-const CONFIG_KEYWORD: &str = "config";
 
 impl App {
 	pub fn from_config_file(path: &Path) -> Self {
