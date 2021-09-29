@@ -1,3 +1,4 @@
+pub mod sync;
 pub mod utils;
 
 use std::fs::File;
@@ -22,8 +23,8 @@ impl App {
 			panic!("No config");
 		}
 
-		let home = utils::file_system::to_abs_path(home);
-		let config = utils::file_system::to_abs_path(config);
+		let home = utils::file_system::to_abs_path(&home);
+		let config = utils::file_system::to_abs_path(&config);
 
 		return App { home, config };
 	}
@@ -65,5 +66,17 @@ impl App {
 		}
 
 		return (home, config);
+	}
+
+	pub fn sync_home(&self) {
+		let src = &self.home;
+		let target = &utils::file_system::to_abs_path("~");
+		sync::sync(src, target);
+	}
+
+	pub fn sync_config(&self) {
+		let src = &self.config;
+		let target = &utils::file_system::to_abs_path("~/.config");
+		sync::sync(src, target);
 	}
 }
