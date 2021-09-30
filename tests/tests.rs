@@ -82,3 +82,10 @@ fn invalid_path() {
 	let p = Path::new("./tests/files/invalid/err5.txt");
 	App::from_config_file(p);
 }
+
+#[test]
+#[should_panic(expected = "Cannot instantiate a ConflictResolver.")]
+fn wrong_resolver_option() {
+	let p = Path::new("./tests/files/invalid/err6.txt");
+	App::from_config_file(p);
+}
