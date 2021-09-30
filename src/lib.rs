@@ -7,15 +7,17 @@ pub use std::path::{Path, PathBuf};
 
 const HOME_KEYWORD: &str = "home";
 const CONFIG_KEYWORD: &str = "config";
+const CONFILCT_RESOLVER_KEYWORD: &str = "conflict_resolver";
 
 pub struct App {
 	pub home: PathBuf,
 	pub config: PathBuf,
+	pub resolver: sync::ConflictResolver,
 }
 
 impl App {
 	pub fn from_config_file(path: &Path) -> Self {
-		let (home, config) = App::parse_file(path);
+		let (home, config, resolver) = App::parse_file(path);
 		if home.is_empty() {
 			panic!("No home");
 		}
@@ -26,12 +28,17 @@ impl App {
 		let home = utils::file_system::to_abs_path(&home);
 		let config = utils::file_system::to_abs_path(&config);
 
-		return App { home, config };
+		return App {
+			home,
+			config,
+			resolver,
+		};
 	}
 
-	fn parse_file(path: &Path) -> (String, String) {
+	fn parse_file(path: &Path) -> (String, String, sync::ConflictResolver) {
 		let mut home = String::default();
 		let mut config = String::default();
+		let mut resolver = sync::ConflictResolver::Prompt;
 
 		let file = io::BufReader::new(File::open(path).expect("cannot open file"));
 		for line in file.lines() {
@@ -57,6 +64,9 @@ impl App {
 			match left.as_str() {
 				crate::HOME_KEYWORD => home = right,
 				crate::CONFIG_KEYWORD => config = right,
+				crate::CONFILCT_RESOLVER_KEYWORD => {
+					resolver = sync::ConflictResolver::from(right.as_ref())
+				}
 				_ => {
 					eprintln!("Keyword {} is not known", left);
 					eprintln!("Line: {}", args);
@@ -65,18 +75,22 @@ impl App {
 			}
 		}
 
-		return (home, config);
+		return (home, config, resolver);
 	}
 
 	pub fn sync_home(&self) {
 		let src = &self.home;
 		let target = &utils::file_system::to_abs_path("~");
-		sync::sync(src, target);
+		let resolver = &self.resolver;
+
+		sync::sync(src, target, resolver);
 	}
 
 	pub fn sync_config(&self) {
 		let src = &self.config;
 		let target = &utils::file_system::to_abs_path("~/.config");
-		sync::sync(src, target);
+		let resolver = &self.resolver;
+
+		sync::sync(src, target, resolver);
 	}
 }

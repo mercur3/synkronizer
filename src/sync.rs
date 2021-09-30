@@ -9,10 +9,24 @@ pub enum ConflictResolver {
 	DoNothing,
 }
 
+impl From<&str> for ConflictResolver {
+	fn from(text: &str) -> Self {
+		return match text.to_lowercase().as_ref() {
+			"prompt" => ConflictResolver::Prompt,
+			"overwrite" => ConflictResolver::Overwrite,
+			"do_nothing" => ConflictResolver::DoNothing,
+			x => panic!(
+				"Cannot instantiate a ConflictResolver. Unknown keyword {}",
+				x
+			),
+		};
+	}
+}
+
 /// Syncs files in the `src` to `target`.
 /// `src` has the meaning the path where we will get the link from
 /// `target` has the meaning where the link will point to
-pub fn sync(src: &Path, target: &Path, resolve: ConflictResolver) {
+pub fn sync(src: &Path, target: &Path, resolve: &ConflictResolver) {
 	println!("Syncing..");
 	println!("Base dir: {}", src.display());
 	println!("Target dir: {}", target.display());
