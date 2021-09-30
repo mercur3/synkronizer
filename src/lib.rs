@@ -3,7 +3,7 @@ pub mod utils;
 
 use std::fs::File;
 use std::io::{self, BufRead};
-pub use std::path::{Path, PathBuf};
+use std::path::{Path, PathBuf};
 
 const HOME_KEYWORD: &str = "home";
 const CONFIG_KEYWORD: &str = "config";

@@ -1,5 +1,6 @@
+use std::path::Path;
 use synkronizer::sync::ConflictResolver;
-use synkronizer::{App, Path};
+use synkronizer::App;
 
 #[test]
 fn file_is_correct() {

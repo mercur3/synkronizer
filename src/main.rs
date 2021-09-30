@@ -1,3 +1,4 @@
+use std::path::Path;
 use synkronizer::*;
 
 fn main() {
