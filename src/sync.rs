@@ -1,8 +1,13 @@
-use crate::resolve::ConflictResolver;
 use std::fs;
 use std::io;
 use std::os::unix::fs as unix;
 use std::path::Path;
+
+pub enum ConflictResolver {
+	Prompt,
+	Overwrite,
+	DoNothing,
+}
 
 /// Syncs files in the `src` to `target`.
 /// `src` has the meaning the path where we will get the link from
@@ -70,7 +75,6 @@ fn overwrite_link(src: &Path, target: &Path) -> io::Result<()> {
 	}
 	return unix::symlink(src, target);
 }
-
 
 // TODO
 //          TESTS          //

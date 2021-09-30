@@ -1,4 +1,3 @@
-pub mod resolve;
 pub mod sync;
 pub mod utils;
 
