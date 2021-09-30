@@ -5,3 +5,4 @@ HOME                = ~/code/linux-configs/home/
             CONFIG =                       ~/code/linux-configs/config/
 
                       #                    fddgfdg
+              CONFLICT_RESOLVER= OVERWRITE

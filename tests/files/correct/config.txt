@@ -2,3 +2,4 @@
 
 HOME = ~/code/linux-configs/home/
 CONFIG = ~/code/linux-configs/config/
+CONFLICT_RESOLVER = PROMPT

@@ -62,7 +62,7 @@ fn prompt(src: &Path, target: &Path) -> io::Result<()> {
 		println!("Do you want to overwrite {} [y/N]?", target.display());
 
 		let mut input = String::default();
-		io::stdin().read_line(&mut input);
+		io::stdin().read_line(&mut input).unwrap();
 		let input = input.trim();
 
 		match input {
@@ -77,10 +77,10 @@ fn overwrite_link(src: &Path, target: &Path) -> io::Result<()> {
 	println!("Replacing {} with a new one", target.display());
 
 	if target.is_file() {
-		fs::remove_file(target);
+		fs::remove_file(target).unwrap();
 	}
 	else if target.is_dir() {
-		fs::remove_dir_all(target);
+		fs::remove_dir_all(target).unwrap();
 	}
 	else {
 		eprintln!("Catastrophic error");

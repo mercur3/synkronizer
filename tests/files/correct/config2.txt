@@ -3,4 +3,5 @@
 hOMe = ~/code/linux-configs/home/
 config = ~/code/linux-configs/config/
 
+conflict_resolver = do_nothing
 #

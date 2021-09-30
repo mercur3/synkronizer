@@ -1,4 +1,4 @@
-# config with comments + extra \n
+# config with comments + extra \n + default ConflictResolver
 
 #dsfdsf ;dsf
 HOME = ~/code/linux-configs/home/

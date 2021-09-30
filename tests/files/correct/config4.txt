@@ -1,5 +1,6 @@
 # arg is overwritten
 
+conflict_resolver = prompt
 HOME = ~/code/linux-configs/home/
 
 
@@ -9,6 +10,7 @@ CONFIG = ~/code/linux-configs/config/
 
 #############
 
+CONFLICT_RESOLVER = DO_NOTHING
           #
 #########3 CONFIG = ~/code/linux-configs/config/
 HOME = ~/code/linux-configs/home/

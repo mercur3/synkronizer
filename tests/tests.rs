@@ -1,3 +1,4 @@
+use synkronizer::sync::ConflictResolver;
 use synkronizer::{App, Path};
 
 #[test]
@@ -7,12 +8,32 @@ fn file_is_correct() {
 	let path = Path::new(&path);
 	let base_config = App::from_config_file(path);
 
+	let expected_resolvers = vec![
+		ConflictResolver::Prompt,
+		ConflictResolver::Prompt,
+		ConflictResolver::DoNothing,
+		ConflictResolver::Overwrite,
+		ConflictResolver::DoNothing,
+		ConflictResolver::DoNothing,
+	];
+	let mut actual_resolvers = Vec::with_capacity(6);
+	actual_resolvers.push(base_config.resolver);
+
 	for i in 1..=5 {
 		let file_name = base_path.replace("{}", &i.to_string());
 		let path = Path::new(&file_name);
 		let x = App::from_config_file(path);
+
+		actual_resolvers.push(x.resolver);
+
 		assert_eq!(base_config.home, x.home);
 		assert_eq!(base_config.config, x.config);
+	}
+
+	for i in 0..6 {
+		let expected = &expected_resolvers[i];
+		let _actual = &actual_resolvers[i];
+		matches!(expected, _actual);
 	}
 }
 
@@ -24,6 +45,7 @@ fn parses_whitespace_path() {
 	assert_eq!(x.config, x.home);
 	assert!(x.home.is_dir());
 	assert!(x.config.is_dir());
+	matches!(x.resolver, ConflictResolver::Prompt);
 }
 
 #[test]
