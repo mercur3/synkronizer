@@ -2,7 +2,9 @@
 name = "synkronizer"
 version = "0.1.0"
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Andri Reveli <reveliandri@gmail.com>"]
+description = "Like GNU Stow but written in Rust."
+readme = "README.org"
+license-file = "LICENSE"
 
 [dependencies]
