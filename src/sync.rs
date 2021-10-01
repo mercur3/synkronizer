@@ -1,5 +1,6 @@
 use std::fs;
 use std::io;
+use std::io::Write;
 use std::os::unix::fs as unix;
 use std::path::Path;
 
@@ -42,16 +43,19 @@ pub fn sync(src: &Path, target: &Path, resolve: &ConflictResolver) {
 			original_location.display(),
 			new_location.display()
 		);
-		// link(original_location, new_location).expect("Unable to perform this action");
+		link(original_location, new_location, resolve).expect("Unable to perform this action");
 	}
 }
 
-fn link(src: &Path, target: &Path, resolver: ConflictResolver) -> io::Result<()> {
+fn link(src: &Path, target: &Path, resolver: &ConflictResolver) -> io::Result<()> {
 	return match target.exists() {
 		true => match resolver {
 			ConflictResolver::Prompt => prompt(src, target),
 			ConflictResolver::Overwrite => overwrite_link(src, target),
-			ConflictResolver::DoNothing => Ok(()),
+			ConflictResolver::DoNothing => {
+				println!("ConflictResolver defined as DoNothing, skipping");
+				Ok(())
+			}
 		},
 		false => unix::symlink(src, target),
 	};
@@ -59,7 +63,8 @@ fn link(src: &Path, target: &Path, resolver: ConflictResolver) -> io::Result<()>
 
 fn prompt(src: &Path, target: &Path) -> io::Result<()> {
 	loop {
-		println!("Do you want to overwrite {} [y/N]?", target.display());
+		print!("Do you want to overwrite {} [y/N]? ", target.display());
+		io::stdout().flush().unwrap();
 
 		let mut input = String::default();
 		io::stdin().read_line(&mut input).unwrap();
