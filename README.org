@@ -30,19 +30,39 @@ Example:
 
 ** Usage
 *** Config file
-- By default uses =./config.txt=.
+- Prefer setting it to =./config.txt=.
 - Empty lines (or lines that contain only whitespace characters) and lines that begin with =#=
   are ignored. This definition extends in [[file:tests/files/correct/config3.txt][this extreme case]] too.
 - The valid options (casing [[file:tests/files/correct/config2.txt][ignored]]) that can appear in the left hand side are:
   + =HOME= - which corresponds to files and directories inside =~/=, except =~/.config=.
   + =CONFIG= - which corresponds to =~/.config=.
-  # + TODO conflict resolver
+  + =CONFLICT_RESOLVER= - set by default as =PROMP=. Other possibilities include: =OVERWRITE=
+    and =DO_NOTHING=.
 - The right hand side should have a valid path to the directory that we want to sync from.
 - A ~=~ separates both sides.
 
-# *** conflict resolver
+*** Conflict resolver
+In case one instance of a config file or directory exists, the =ConflictResolver= enumeration
+is used to resolve that conflict.
+1. =ConflictResolver::Prompt= - is the default resolver. It prompts the user to answer [y/N]
+  where =y= means overwrite, whereas =n= means do nothing.
+2. =ConflictResolver::Overwrite= - same as answering =y= to =ConflictResolver::Prompt=.
+3. =ConflictResolver::DoNothing= - same as answering =n= to =ConflictResolver::Prompt=.
+
+*** main.rs
+#+begin_src rust
+use std::path::Path;
+use synkronizer::App;
+
+fn main() {
+    let app = App::from_config_file(Path::new("config.txt"));
+    app.sync_home();
+    app.sync_config();
+}
+#+end_src
 
 ** Notes
 1. Files which have [[file:tests/files/correct/config5.txt][spaces in their name]].
 2. In case when you don't want to sync =~/= or =~/.config= make the corresponding option in
    config file point to an empty directory.
+3. Config file uses =DO_NOTHING= to refer to =synkronizer::sync::ConflictResolver::DoNothing=.
