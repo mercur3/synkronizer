@@ -11,4 +11,7 @@ fn main() {
 	// let target = &Path::new("/home/andri/code/synkronizer/tests/x/target");
 	// let resolve = &sync::ConflictResolver::Prompt;
 	// sync::sync(src, target, resolve);
+	std::process::Command::new("tests/x/script.sh")
+		.output()
+		.unwrap();
 }

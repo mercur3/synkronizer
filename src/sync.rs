@@ -95,5 +95,71 @@ fn overwrite_link(src: &Path, target: &Path) -> io::Result<()> {
 	return unix::symlink(src, target);
 }
 
-// TODO
-//          TESTS          //
+#[cfg(test)]
+mod test {
+	use super::*;
+	use std::path::PathBuf;
+	use std::process::{Command, Stdio};
+	use crate::utils::file_system::expand_tilde;
+
+	fn setup_target_dir() {
+		Command::new("tests/x/script.sh")
+			.stdout(Stdio::null())
+			.stdin(Stdio::null())
+			.stderr(Stdio::null())
+			.output()
+			.unwrap();
+	}
+
+	fn setup_paths() -> (PathBuf, PathBuf) {
+		let src = PathBuf::from("/home/andri/code/synkronizer/tests/x/src");
+		let target = PathBuf::from("/home/andri/code/synkronizer/tests/x/target");
+		return (src, target);
+	}
+
+	#[test]
+	fn link_with_do_nothing_conflict_resolver() {
+		setup_target_dir();
+
+		let (src, target) = setup_paths();
+		let resolve = ConflictResolver::DoNothing;
+		sync(&src, &target, &resolve);
+
+		let f1 = fs::read_link(Path::new("./tests/x/target/1"));
+		let f2 = fs::read_link(Path::new("./tests/x/target/2"));
+		let f3 = fs::read_link(Path::new("./tests/x/target/3")).unwrap();
+		let d1 = fs::read_link(Path::new("./tests/x/target/alpha")).unwrap();
+		let d2 = fs::read_link(Path::new("./tests/x/target/beta")).unwrap();
+		let d3 = fs::read_link(Path::new("./tests/x/target/gamma")).unwrap();
+
+		matches!(f1, Err(_));
+		matches!(f2, Err(_));
+		assert_eq!(&f3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/3")));
+		assert_eq!(&d1, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/alpha")));
+		assert_eq!(&d2, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/beta")));
+		assert_eq!(&d3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/gamma")));
+	}
+
+	#[test]
+	fn link_with_overwrite_conflict_resolver() {
+		setup_target_dir();
+
+		let (src, target) = setup_paths();
+		let resolve = ConflictResolver::Overwrite;
+		sync(&src, &target, &resolve);
+
+		let f1 = fs::read_link(Path::new("./tests/x/target/1")).unwrap();
+		let f2 = fs::read_link(Path::new("./tests/x/target/2")).unwrap();
+		let f3 = fs::read_link(Path::new("./tests/x/target/3")).unwrap();
+		let d1 = fs::read_link(Path::new("./tests/x/target/alpha")).unwrap();
+		let d2 = fs::read_link(Path::new("./tests/x/target/beta")).unwrap();
+		let d3 = fs::read_link(Path::new("./tests/x/target/gamma")).unwrap();
+
+		assert_eq!(&f1, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/1")));
+		assert_eq!(&f2, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/2")));
+		assert_eq!(&f3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/3")));
+		assert_eq!(&d1, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/alpha")));
+		assert_eq!(&d2, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/beta")));
+		assert_eq!(&d3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/gamma")));
+	}
+}
