@@ -3,4 +3,4 @@ __pycache__/
 # Added by cargo
 
 /target
-/tests/x/target
+tests/x/target/
