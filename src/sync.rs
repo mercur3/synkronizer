@@ -117,6 +117,12 @@ mod test {
 		return (src, target);
 	}
 
+	fn base_paths() -> (String, String) {
+		let target_base = String::from("./tests/x/target/");
+		let src_base = expand_tilde("~/code/synkronizer/tests/x/src/");
+		return (target_base, src_base);
+	}
+
 	#[test]
 	fn link_with_do_nothing_conflict_resolver() {
 		setup_target_dir();
@@ -125,19 +131,20 @@ mod test {
 		let resolve = ConflictResolver::DoNothing;
 		sync(&src, &target, &resolve);
 
-		let f1 = fs::read_link(Path::new("./tests/x/target/1"));
-		let f2 = fs::read_link(Path::new("./tests/x/target/2"));
-		let f3 = fs::read_link(Path::new("./tests/x/target/3")).unwrap();
-		let d1 = fs::read_link(Path::new("./tests/x/target/alpha")).unwrap();
-		let d2 = fs::read_link(Path::new("./tests/x/target/beta")).unwrap();
-		let d3 = fs::read_link(Path::new("./tests/x/target/gamma")).unwrap();
+		let (target_base, src_base) = base_paths();
+		let f1 = fs::read_link(Path::new(&format!("{}{}", target_base, 1)));
+		let f2 = fs::read_link(Path::new(&format!("{}{}", target_base, 2)));
+		let f3 = fs::read_link(Path::new(&format!("{}{}", target_base, 3))).unwrap();
+		let d1 = fs::read_link(Path::new(&format!("{}{}", target_base, "alpha"))).unwrap();
+		let d2 = fs::read_link(Path::new(&format!("{}{}", target_base, "beta"))).unwrap();
+		let d3 = fs::read_link(Path::new(&format!("{}{}", target_base, "gamma"))).unwrap();
 
 		matches!(f1, Err(_));
 		matches!(f2, Err(_));
-		assert_eq!(&f3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/3")));
-		assert_eq!(&d1, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/alpha")));
-		assert_eq!(&d2, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/beta")));
-		assert_eq!(&d3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/gamma")));
+		assert_eq!(&f3, Path::new(&format!("{}{}", src_base, 3)));
+		assert_eq!(&d1, Path::new(&format!("{}{}", src_base, "alpha")));
+		assert_eq!(&d2, Path::new(&format!("{}{}", src_base, "beta")));
+		assert_eq!(&d3, Path::new(&format!("{}{}", src_base, "gamma")));
 	}
 
 	#[test]
@@ -148,18 +155,19 @@ mod test {
 		let resolve = ConflictResolver::Overwrite;
 		sync(&src, &target, &resolve);
 
-		let f1 = fs::read_link(Path::new("./tests/x/target/1")).unwrap();
-		let f2 = fs::read_link(Path::new("./tests/x/target/2")).unwrap();
-		let f3 = fs::read_link(Path::new("./tests/x/target/3")).unwrap();
-		let d1 = fs::read_link(Path::new("./tests/x/target/alpha")).unwrap();
-		let d2 = fs::read_link(Path::new("./tests/x/target/beta")).unwrap();
-		let d3 = fs::read_link(Path::new("./tests/x/target/gamma")).unwrap();
+		let (target_base, src_base) = base_paths();
+		let f1 = fs::read_link(Path::new(&format!("{}{}", target_base, 1))).unwrap();
+		let f2 = fs::read_link(Path::new(&format!("{}{}", target_base, 2))).unwrap();
+		let f3 = fs::read_link(Path::new(&format!("{}{}", target_base, 3))).unwrap();
+		let d1 = fs::read_link(Path::new(&format!("{}{}", target_base, "alpha"))).unwrap();
+		let d2 = fs::read_link(Path::new(&format!("{}{}", target_base, "beta"))).unwrap();
+		let d3 = fs::read_link(Path::new(&format!("{}{}", target_base, "gamma"))).unwrap();
 
-		assert_eq!(&f1, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/1")));
-		assert_eq!(&f2, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/2")));
-		assert_eq!(&f3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/3")));
-		assert_eq!(&d1, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/alpha")));
-		assert_eq!(&d2, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/beta")));
-		assert_eq!(&d3, Path::new(&expand_tilde("~/code/synkronizer/tests/x/src/gamma")));
+		assert_eq!(&f1, Path::new(&format!("{}{}", src_base, "1")));
+		assert_eq!(&f2, Path::new(&format!("{}{}", src_base, "2")));
+		assert_eq!(&f3, Path::new(&format!("{}{}", src_base, "3")));
+		assert_eq!(&d1, Path::new(&format!("{}{}", src_base, "alpha")));
+		assert_eq!(&d2, Path::new(&format!("{}{}", src_base, "beta")));
+		assert_eq!(&d3, Path::new(&format!("{}{}", src_base, "gamma")));
 	}
 }
