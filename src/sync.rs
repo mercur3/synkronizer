@@ -112,14 +112,14 @@ mod test {
 	}
 
 	fn setup_paths() -> (PathBuf, PathBuf) {
-		let src = PathBuf::from("/home/andri/code/synkronizer/tests/x/src");
-		let target = PathBuf::from("/home/andri/code/synkronizer/tests/x/target");
+		let src = PathBuf::from("/home/andri/code/personal/synkronizer/tests/x/src");
+		let target = PathBuf::from("/home/andri/code/personal/synkronizer/tests/x/target");
 		return (src, target);
 	}
 
 	fn base_paths() -> (String, String) {
 		let target_base = String::from("./tests/x/target/");
-		let src_base = expand_tilde("~/code/synkronizer/tests/x/src/");
+		let src_base = expand_tilde("~/code/personal/synkronizer/tests/x/src/");
 		return (target_base, src_base);
 	}
 

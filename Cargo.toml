@@ -5,5 +5,5 @@ edition = "2018"
 authors = ["Andri Reveli <reveliandri@gmail.com>"]
 description = "Like GNU Stow but written in Rust."
 readme = "README.org"
-repository = "https://github.com/andriR/synkronizer"
+repository = "https://github.com/andri-reveli/synkronizer"
 license-file = "LICENSE"
