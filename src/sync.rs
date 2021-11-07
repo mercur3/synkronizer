@@ -98,9 +98,9 @@ fn overwrite_link(src: &Path, target: &Path) -> io::Result<()> {
 #[cfg(test)]
 mod test {
 	use super::*;
+	use crate::utils::file_system::expand_tilde;
 	use std::path::PathBuf;
 	use std::process::{Command, Stdio};
-	use crate::utils::file_system::expand_tilde;
 
 	fn setup_target_dir() {
 		Command::new("tests/x/script.sh")
@@ -120,7 +120,7 @@ mod test {
 	fn base_paths() -> (String, String) {
 		let target_base = String::from("./tests/x/target/");
 		let src_base = expand_tilde("~/code/personal/synkronizer/tests/x/src/");
-		return (target_base, src_base);
+		return (target_base, src_base.into_owned());
 	}
 
 	#[test]
