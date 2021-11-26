@@ -1,17 +1,59 @@
+use std::env;
 use std::path::Path;
 use synkronizer::*;
 
-fn main() {
-	// let app = App::from_config_file(Path::new("config.txt"));
+const DEFAULT_PATH: &str = "config.txt";
+const HELP_COMMAND: &str = "--help";
+
+fn run(path: &Path) {
+	// TODO uncomment when release
+	// let app = App::from_config_file(path);
 	// app.sync_home();
 	// app.sync_config();
+}
 
-	// FIXME convert to unit test
-	// let src = &Path::new("/home/andri/code/synkronizer/tests/x/src");
-	// let target = &Path::new("/home/andri/code/synkronizer/tests/x/target");
-	// let resolve = &sync::ConflictResolver::Prompt;
-	// sync::sync(src, target, resolve);
-	std::process::Command::new("tests/x/script.sh")
-		.output()
-		.unwrap();
+fn print_help() {
+	println!(
+		r#"
+	synkronizer
+
+	NAME
+		synkronizer - Like GNU Stow, but written in Rust and with 0 dependencies.
+
+	SYNOPSIS
+		./synkronizer [OPTION | FILE]
+
+	DESCRIPTION
+		Sync config files from a git repo by using symlinks.
+		If no argument is passed uses default path "config.txt".
+
+		--help
+			print this help message
+
+		FILE
+			path to config file.
+
+	AUTHOR
+		Written by Andri Reveli
+	"#
+	);
+}
+
+fn main() {
+	let args: Vec<_> = env::args().skip(1).collect();
+
+	match args.len() {
+		0 => {
+			run(Path::new(DEFAULT_PATH));
+		}
+		1 => {
+			if args[0] == HELP_COMMAND {
+				print_help();
+			}
+			else {
+				run(Path::new(&args[0]));
+			}
+		}
+		_ => eprintln!("Unsupported number of command line arguments"),
+	}
 }
