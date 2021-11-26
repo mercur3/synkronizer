@@ -3,7 +3,8 @@ use std::path::Path;
 use synkronizer::*;
 
 const DEFAULT_PATH: &str = "config.txt";
-const HELP_COMMAND: &str = "--help";
+const HELP_LONG: &str = "--help";
+const HELP_SHORT: &str = "-h";
 
 fn run(path: &Path) {
 	// TODO uncomment when release
@@ -27,7 +28,7 @@ fn print_help() {
 		Sync config files from a git repo by using symlinks.
 		If no argument is passed uses default path "config.txt".
 
-		--help
+		-h, --help
 			print this help message
 
 		FILE
@@ -48,7 +49,8 @@ fn main() {
 		}
 		(1, _) => {
 			let argument = args.next().unwrap();
-			if argument == HELP_COMMAND {
+
+			if argument == HELP_LONG || argument == HELP_SHORT {
 				print_help();
 			}
 			else {
