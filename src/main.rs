@@ -40,18 +40,19 @@ fn print_help() {
 }
 
 fn main() {
-	let args: Vec<_> = env::args().skip(1).collect();
+	let mut args = env::args().skip(1);
 
-	match args.len() {
-		0 => {
+	match args.size_hint() {
+		(0, _) => {
 			run(Path::new(DEFAULT_PATH));
 		}
-		1 => {
-			if args[0] == HELP_COMMAND {
+		(1, _) => {
+			let argument = args.next().unwrap();
+			if argument == HELP_COMMAND {
 				print_help();
 			}
 			else {
-				run(Path::new(&args[0]));
+				run(Path::new(&argument));
 			}
 		}
 		_ => eprintln!("Unsupported number of command line arguments"),
