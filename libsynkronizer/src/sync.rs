@@ -103,7 +103,7 @@ mod test {
 	use std::process::{Command, Stdio};
 
 	fn setup_target_dir() {
-		Command::new("tests/x/script.sh")
+		Command::new("../app/tests/x/script.sh")
 			.stdout(Stdio::null())
 			.stdin(Stdio::null())
 			.stderr(Stdio::null())
@@ -112,14 +112,14 @@ mod test {
 	}
 
 	fn setup_paths() -> (PathBuf, PathBuf) {
-		let src = PathBuf::from("/home/andri/code/personal/synkronizer/tests/x/src");
-		let target = PathBuf::from("/home/andri/code/personal/synkronizer/tests/x/target");
+		let src = PathBuf::from("/home/andri/code/personal/synkronizer/app/tests/x/src");
+		let target = PathBuf::from("/home/andri/code/personal/synkronizer/app/tests/x/target");
 		return (src, target);
 	}
 
 	fn base_paths() -> (String, String) {
-		let target_base = String::from("./tests/x/target/");
-		let src_base = expand_tilde("~/code/personal/synkronizer/tests/x/src/");
+		let target_base = String::from("../app/tests/x/target/");
+		let src_base = expand_tilde("~/code/personal/synkronizer/app/tests/x/src/");
 		return (target_base, src_base.into_owned());
 	}
 

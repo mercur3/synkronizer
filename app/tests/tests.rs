@@ -1,11 +1,13 @@
+use libsynkronizer::sync::ConflictResolver;
+use libsynkronizer::App;
 use std::path::Path;
-use synkronizer::sync::ConflictResolver;
-use synkronizer::App;
+
+const BASE_CORRECT_PATH: &str = "../app/tests/files/correct/config{}.txt";
+const BASE_INVALID_PATH: &str = "../app/tests/files/invalid/err{}.txt";
 
 #[test]
 fn file_is_correct() {
-	let base_path = "./tests/files/correct/config{}.txt";
-	let path = base_path.replace("{}", "");
+	let path = BASE_CORRECT_PATH.replace("{}", "");
 	let path = Path::new(&path);
 	let base_config = App::from_config_file(path);
 
@@ -21,7 +23,7 @@ fn file_is_correct() {
 	actual_resolvers.push(base_config.resolver);
 
 	for i in 1..=5 {
-		let file_name = base_path.replace("{}", &i.to_string());
+		let file_name = BASE_CORRECT_PATH.replace("{}", &i.to_string());
 		let path = Path::new(&file_name);
 		let x = App::from_config_file(path);
 
@@ -40,8 +42,8 @@ fn file_is_correct() {
 
 #[test]
 fn parses_whitespace_path() {
-	let p = Path::new("./tests/files/correct/config6.txt");
-	let x = App::from_config_file(p);
+	let p = BASE_CORRECT_PATH.replace("{}", "6");
+	let x = App::from_config_file(Path::new(&p));
 
 	assert_eq!(x.config, x.home);
 	assert!(x.home.is_dir());
@@ -52,41 +54,41 @@ fn parses_whitespace_path() {
 #[test]
 #[should_panic(expected = "Unknown keyword")]
 fn uknown_keyword() {
-	let p = Path::new("./tests/files/invalid/err1.txt");
-	App::from_config_file(p);
+	let p = BASE_INVALID_PATH.replace("{}", "1");
+	App::from_config_file(Path::new(&p));
 }
 
 #[test]
 #[should_panic(expected = "Missing `=`")]
 fn missing_equals_sign() {
-	let p = Path::new("./tests/files/invalid/err2.txt");
-	App::from_config_file(p);
+	let p = BASE_INVALID_PATH.replace("{}", "2");
+	App::from_config_file(Path::new(&p));
 }
 
 #[test]
 #[should_panic(expected = "No config")]
 fn no_config() {
-	let p = Path::new("./tests/files/invalid/err3.txt");
-	App::from_config_file(p);
+	let p = BASE_INVALID_PATH.replace("{}", "3");
+	App::from_config_file(Path::new(&p));
 }
 
 #[test]
 #[should_panic(expected = "No home")]
 fn no_home() {
-	let p = Path::new("./tests/files/invalid/err4.txt");
-	App::from_config_file(p);
+	let p = BASE_INVALID_PATH.replace("{}", "4");
+	App::from_config_file(Path::new(&p));
 }
 
 #[test]
 #[should_panic(expected = "No such file or directory")]
 fn invalid_path() {
-	let p = Path::new("./tests/files/invalid/err5.txt");
-	App::from_config_file(p);
+	let p = BASE_INVALID_PATH.replace("{}", "5");
+	App::from_config_file(Path::new(&p));
 }
 
 #[test]
 #[should_panic(expected = "Cannot instantiate a ConflictResolver.")]
 fn wrong_resolver_option() {
-	let p = Path::new("./tests/files/invalid/err6.txt");
-	App::from_config_file(p);
+	let p = BASE_INVALID_PATH.replace("{}", "6");
+	App::from_config_file(Path::new(&p));
 }

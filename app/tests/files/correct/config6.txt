@@ -1,0 +1,2 @@
+HOME = ~/code/personal/synkronizer/app/tests/dirs/dir with spaces/
+CONFIG = ~/code/personal/synkronizer/app/tests/dirs/dir with spaces/

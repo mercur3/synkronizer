@@ -3,5 +3,19 @@
 version = 3
 
 [[package]]
+name = "app-gtk"
+version = "0.1.0"
+dependencies = [
+ "libsynkronizer",
+]
+
+[[package]]
+name = "libsynkronizer"
+version = "0.1.0"
+
+[[package]]
 name = "synkronizer"
 version = "1.0.0"
+dependencies = [
+ "libsynkronizer",
+]

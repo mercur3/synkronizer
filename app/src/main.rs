@@ -1,6 +1,6 @@
+use libsynkronizer::*;
 use std::env;
 use std::path::Path;
-use synkronizer::*;
 
 const DEFAULT_PATH: &str = "config.txt";
 const HELP_LONG: &str = "--help";
