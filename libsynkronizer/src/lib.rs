@@ -1,6 +1,7 @@
 pub mod sync;
 pub mod utils;
 
+use std::borrow::Cow;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
@@ -35,9 +36,9 @@ impl App {
 		};
 	}
 
-	fn parse_file(path: &Path) -> (String, String, sync::ConflictResolver) {
-		let mut home = String::default();
-		let mut config = String::default();
+	fn parse_file(path: &Path) -> (Cow<str>, Cow<str>, sync::ConflictResolver) {
+		let mut home = Cow::Borrowed("");
+		let mut config = Cow::Borrowed("");
 		let mut resolver = sync::ConflictResolver::Prompt;
 
 		let file = io::BufReader::new(File::open(path).expect("cannot open file"));
@@ -62,8 +63,8 @@ impl App {
 			}
 
 			match left.as_str() {
-				crate::HOME_KEYWORD => home = right,
-				crate::CONFIG_KEYWORD => config = right,
+				crate::HOME_KEYWORD => home = Cow::Owned(right),
+				crate::CONFIG_KEYWORD => config = Cow::Owned(right),
 				crate::CONFILCT_RESOLVER_KEYWORD => {
 					resolver = sync::ConflictResolver::from(right.as_ref())
 				}
@@ -78,19 +79,19 @@ impl App {
 		return (home, config, resolver);
 	}
 
-	pub fn sync_home(&self) {
+	pub fn sync_home(&self) -> Vec<sync::Link> {
 		let src = &self.home;
 		let target = &utils::file_system::to_abs_path("~");
 		let resolver = &self.resolver;
 
-		sync::sync(src, target, resolver);
+		return sync::sync(src, target, resolver);
 	}
 
-	pub fn sync_config(&self) {
+	pub fn sync_config(&self) -> Vec<sync::Link> {
 		let src = &self.config;
 		let target = &utils::file_system::to_abs_path("~/.config");
 		let resolver = &self.resolver;
 
-		sync::sync(src, target, resolver);
+		return sync::sync(src, target, resolver);
 	}
 }
