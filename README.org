@@ -30,7 +30,7 @@ Example:
 
 ** Usage
 *** Config file
-- Prefer setting it to =./config.txt=.
+- By default searches at =./config.txt=.
 - Empty lines (or lines that contain only whitespace characters) and lines that begin with =#=
   are ignored. This definition extends in [[file:tests/files/correct/config3.txt][this extreme case]] too.
 - The valid options (casing [[file:tests/files/correct/config2.txt][ignored]]) that can appear in the left hand side are:
@@ -55,6 +55,6 @@ For the moment only a command line version is supported. GTK version is in TODO.
 
 ** Notes
 1. Files which have [[file:tests/files/correct/config5.txt][spaces in their name]].
-2. In case when you don't want to sync =~/= or =~/.config= make the corresponding option in
-   config file point to an empty directory.
-3. Config file uses =DO_NOTHING= to refer to =synkronizer::sync::ConflictResolver::DoNothing=.
+2. In case when you don't want to sync =~/= or =~/.config= modify the source code and do not
+   =App::sync_[home | config]()=
+3. Config file uses =DO_NOTHING= to refer to =libsynkronizer::sync::ConflictResolver::DoNothing=.
