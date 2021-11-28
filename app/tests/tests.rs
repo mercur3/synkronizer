@@ -1,5 +1,5 @@
+use libsynkronizer::app::App;
 use libsynkronizer::sync::ConflictResolver;
-use libsynkronizer::App;
 use std::path::Path;
 
 const BASE_CORRECT_PATH: &str = "../app/tests/files/correct/config{}.txt";
