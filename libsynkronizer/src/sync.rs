@@ -1,9 +1,8 @@
 use std::fs;
 use std::io;
-use std::io::Write;
-use std::os::unix::fs as unix;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
+#[derive(Clone)]
 pub enum ConflictResolver {
 	Prompt,
 	Overwrite,
@@ -24,83 +23,98 @@ impl From<&str> for ConflictResolver {
 	}
 }
 
+pub struct Link {
+	pub src: PathBuf,
+	pub target: PathBuf,
+	pub resolver: ConflictResolver,
+}
+
+pub trait Linker {
+	fn log(&self, msg: &str);
+
+	fn log_err(&self, msg: &str);
+
+	fn prompt(&self) -> &str;
+
+	fn link(&self, link: &Link) -> io::Result<()>;
+}
+
 /// Syncs files in the `src` to `target`.
 /// `src` has the meaning the path where we will get the link from
 /// `target` has the meaning where the link will point to
-pub fn sync(src: &Path, target: &Path, resolve: &ConflictResolver) {
-	println!("Syncing..");
-	println!("Base dir: {}", src.display());
-	println!("Target dir: {}", target.display());
+pub fn sync(src: &Path, target: &Path, resolve: &ConflictResolver) -> Vec<Link> {
+	return fs::read_dir(src)
+		.expect(&format!("Cannot open dir {}", src.display()))
+		.map(|entry| {
+			let entry = entry.unwrap();
+			let original_location = entry.path();
+			let file_name = &entry.file_name();
+			let new_location = target.clone().join(file_name);
 
-	for i in fs::read_dir(src).unwrap() {
-		let entry = i.unwrap();
-		let original_location = &entry.path();
-		let file_name = &entry.file_name();
-		let new_location = &target.clone().join(file_name);
-
-		println!(
-			"{} -> {}",
-			original_location.display(),
-			new_location.display()
-		);
-		link(original_location, new_location, resolve).expect("Unable to perform this action");
-	}
-}
-
-fn link(src: &Path, target: &Path, resolver: &ConflictResolver) -> io::Result<()> {
-	return match target.exists() {
-		true => match resolver {
-			ConflictResolver::Prompt => prompt(src, target),
-			ConflictResolver::Overwrite => overwrite_link(src, target),
-			ConflictResolver::DoNothing => {
-				println!("ConflictResolver defined as DoNothing, skipping");
-				Ok(())
+			Link {
+				src: original_location,
+				target: new_location,
+				resolver: resolve.clone(),
 			}
-		},
-		false => unix::symlink(src, target),
-	};
-}
-
-fn prompt(src: &Path, target: &Path) -> io::Result<()> {
-	loop {
-		print!("Do you want to overwrite {} [y/N]? ", target.display());
-		io::stdout().flush().unwrap();
-
-		let mut input = String::default();
-		io::stdin().read_line(&mut input).unwrap();
-		let input = input.trim();
-
-		match input {
-			"y" | "Y" => return overwrite_link(src, target),
-			"n" | "N" | "" => return Ok(()),
-			x => println!("Unknown parameter {}", x),
-		}
-	}
-}
-
-fn overwrite_link(src: &Path, target: &Path) -> io::Result<()> {
-	println!("Replacing {} with a new one", target.display());
-
-	if target.is_file() {
-		fs::remove_file(target).unwrap();
-	}
-	else if target.is_dir() {
-		fs::remove_dir_all(target).unwrap();
-	}
-	else {
-		eprintln!("Catastrophic error");
-		eprintln!("src: {}", src.display());
-		eprintln!("target: {}", target.display());
-	}
-	return unix::symlink(src, target);
+		})
+		.collect();
 }
 
 #[cfg(test)]
 mod test {
 	use super::*;
 	use crate::utils::file_system::expand_tilde;
-	use std::path::PathBuf;
+	use std::io::Write;
+	use std::os::unix::fs as unix;
 	use std::process::{Command, Stdio};
+
+	fn link(src: &Path, target: &Path, resolver: &ConflictResolver) -> io::Result<()> {
+		return match target.exists() {
+			true => match resolver {
+				ConflictResolver::Prompt => prompt(src, target),
+				ConflictResolver::Overwrite => overwrite_link(src, target),
+				ConflictResolver::DoNothing => {
+					println!("ConflictResolver defined as DoNothing, skipping");
+					Ok(())
+				}
+			},
+			false => unix::symlink(src, target),
+		};
+	}
+
+	fn prompt(src: &Path, target: &Path) -> io::Result<()> {
+		loop {
+			print!("Do you want to overwrite {} [y/N]? ", target.display());
+			io::stdout().flush().unwrap();
+
+			let mut input = String::default();
+			io::stdin().read_line(&mut input).unwrap();
+			let input = input.trim();
+
+			match input {
+				"y" | "Y" => return overwrite_link(src, target),
+				"n" | "N" | "" => return Ok(()),
+				x => println!("Unknown parameter {}", x),
+			}
+		}
+	}
+
+	fn overwrite_link(src: &Path, target: &Path) -> io::Result<()> {
+		println!("Replacing {} with a new one", target.display());
+
+		if target.is_file() {
+			fs::remove_file(target).unwrap();
+		}
+		else if target.is_dir() {
+			fs::remove_dir_all(target).unwrap();
+		}
+		else {
+			eprintln!("Catastrophic error");
+			eprintln!("src: {}", src.display());
+			eprintln!("target: {}", target.display());
+		}
+		return unix::symlink(src, target);
+	}
 
 	fn setup_target_dir() {
 		Command::new("../app/tests/x/script.sh")
@@ -129,7 +143,10 @@ mod test {
 
 		let (src, target) = setup_paths();
 		let resolve = ConflictResolver::DoNothing;
-		sync(&src, &target, &resolve);
+		let vec = sync(&src, &target, &resolve);
+		for l in vec {
+			link(&l.src, &l.target, &l.resolver).unwrap();
+		}
 
 		let (target_base, src_base) = base_paths();
 		let f1 = fs::read_link(Path::new(&format!("{}{}", target_base, 1)));
@@ -153,7 +170,10 @@ mod test {
 
 		let (src, target) = setup_paths();
 		let resolve = ConflictResolver::Overwrite;
-		sync(&src, &target, &resolve);
+		let vec = sync(&src, &target, &resolve);
+		for l in vec {
+			link(&l.src, &l.target, &l.resolver).unwrap();
+		}
 
 		let (target_base, src_base) = base_paths();
 		let f1 = fs::read_link(Path::new(&format!("{}{}", target_base, 1))).unwrap();
