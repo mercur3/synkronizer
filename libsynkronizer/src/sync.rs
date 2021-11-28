@@ -139,7 +139,7 @@ impl Linker for CliLinker {
 /// Syncs files in the `src` to `target`.
 /// `src` has the meaning the path where we will get the link from
 /// `target` has the meaning where the link will point to
-pub fn sync(src: &Path, target: &Path, resolve: &ConflictResolver) -> Vec<Link> {
+pub fn sync(src: &Path, target: &Path, resolve: ConflictResolver) -> Vec<Link> {
 	return fs::read_dir(src)
 		.expect(&format!("Cannot open dir {}", src.display()))
 		.map(|entry| {
@@ -163,6 +163,9 @@ mod test {
 	use crate::utils::file_system::expand_tilde;
 	use std::process::{Command, Stdio};
 
+	const SRC_PATH: &str = "/home/andri/code/personal/synkronizer/app/tests/x/src";
+	const TARGET_PATH: &str = "/home/andri/code/personal/synkronizer/app/tests/x/target";
+
 	fn setup_target_dir() {
 		Command::new("../app/tests/x/script.sh")
 			.stdout(Stdio::null())
@@ -170,12 +173,6 @@ mod test {
 			.stderr(Stdio::null())
 			.output()
 			.unwrap();
-	}
-
-	fn setup_paths() -> (PathBuf, PathBuf) {
-		let src = PathBuf::from("/home/andri/code/personal/synkronizer/app/tests/x/src");
-		let target = PathBuf::from("/home/andri/code/personal/synkronizer/app/tests/x/target");
-		return (src, target);
 	}
 
 	fn base_paths() -> (String, String) {
@@ -188,10 +185,12 @@ mod test {
 	fn link_with_do_nothing_conflict_resolver() {
 		setup_target_dir();
 
-		let resolve = ConflictResolver::DoNothing;
 		let do_nothing_linker = CliLinker::new();
-		let (src, target) = setup_paths();
-		let vec = sync(&src, &target, &resolve);
+		let vec = sync(
+			&Path::new(SRC_PATH),
+			&Path::new(TARGET_PATH),
+			ConflictResolver::DoNothing,
+		);
 
 		for l in vec {
 			do_nothing_linker.link(&l).unwrap();
@@ -217,10 +216,12 @@ mod test {
 	fn link_with_overwrite_conflict_resolver() {
 		setup_target_dir();
 
-		let (src, target) = setup_paths();
-		let resolve = ConflictResolver::Overwrite;
-		let vec = sync(&src, &target, &resolve);
 		let overwrite_linker = CliLinker::new();
+		let vec = sync(
+			&Path::new(SRC_PATH),
+			&Path::new(TARGET_PATH),
+			ConflictResolver::Overwrite,
+		);
 
 		for l in vec {
 			overwrite_linker.link(&l).unwrap();

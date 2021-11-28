@@ -84,7 +84,7 @@ impl App {
 		let target = &utils::file_system::to_abs_path("~");
 		let resolver = &self.resolver;
 
-		return sync::sync(src, target, resolver);
+		return sync::sync(src, target, resolver.clone());
 	}
 
 	pub fn sync_config(&self) -> Vec<sync::Link> {
@@ -92,6 +92,6 @@ impl App {
 		let target = &utils::file_system::to_abs_path("~/.config");
 		let resolver = &self.resolver;
 
-		return sync::sync(src, target, resolver);
+		return sync::sync(src, target, resolver.clone());
 	}
 }
