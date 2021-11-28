@@ -1,4 +1,5 @@
 use std::fs;
+use std::os::unix::fs as unix;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone)]
@@ -35,7 +36,50 @@ pub trait Linker {
 
 	fn prompt(&self, msg: &str) -> String;
 
-	fn link(&self, link: &Link) -> Result<(), String>;
+	fn prompt_for_overwrite(&self, link: &Link) -> Result<(), String>;
+
+	fn link(&self, link: &Link) -> Result<(), String> {
+		return match link.target.exists() {
+			true => match link.resolver {
+				ConflictResolver::Prompt => self.prompt_for_overwrite(link),
+				ConflictResolver::Overwrite => self.overwrite_link(link),
+				ConflictResolver::DoNothing => Ok(()),
+			},
+			false => match unix::symlink(&link.src, &link.target) {
+				Ok(_) => Ok(()),
+				_ => Err(String::from("Cannot link")),
+			},
+		};
+	}
+
+	fn overwrite_link(&self, link: &Link) -> Result<(), String> {
+		let src = &link.src;
+		let target = &link.target;
+
+		if target.is_file() {
+			fs::remove_file(target).unwrap();
+		}
+		else if link.target.is_dir() {
+			fs::remove_dir_all(target).unwrap();
+		}
+		else {
+			return Err(format!(
+				"Catastrophic error\nsrc: {}\ntarget: {}",
+				src.display(),
+				target.display()
+			));
+		}
+
+		let result = unix::symlink(src, target);
+		if result.is_err() {
+			return Err(format!(
+				"Catastrophic error\nsrc: {}\ntarget: {}",
+				src.display(),
+				target.display()
+			));
+		}
+		return Ok(());
+	}
 }
 
 /// Syncs files in the `src` to `target`.
