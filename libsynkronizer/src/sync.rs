@@ -1,5 +1,4 @@
 use std::fs;
-use std::io;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone)]
@@ -34,9 +33,9 @@ pub trait Linker {
 
 	fn log_err(&self, msg: &str);
 
-	fn prompt(&self) -> &str;
+	fn prompt(&self, msg: &str) -> String;
 
-	fn link(&self, link: &Link) -> io::Result<()>;
+	fn link(&self, link: &Link) -> Result<(), String>;
 }
 
 /// Syncs files in the `src` to `target`.
