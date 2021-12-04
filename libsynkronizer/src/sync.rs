@@ -137,14 +137,13 @@ impl Linker for CliLinker {
 	}
 }
 
-pub struct DirContent<'a> {
-	src: &'a Path,
-	target: PathBuf,
+pub struct DirContent {
+	dir: PathBuf,
 	resolver: ConflictResolver,
 	reader: fs::ReadDir,
 }
 
-impl<'a> Iterator for DirContent<'a> {
+impl Iterator for DirContent {
 	type Item = Link;
 
 	fn next(&mut self) -> Option<Self::Item> {
@@ -153,7 +152,7 @@ impl<'a> Iterator for DirContent<'a> {
 				let entry = entry.unwrap();
 				let original_location = entry.path();
 				let file_name = &entry.file_name();
-				let new_location = self.target.clone().join(file_name);
+				let new_location = self.dir.clone().join(file_name);
 
 				Some(Link {
 					src: original_location,
@@ -169,12 +168,11 @@ impl<'a> Iterator for DirContent<'a> {
 /// Syncs files in the `src` to `target`.
 /// `src` has the meaning the path where we will get the link from
 /// `target` has the meaning where the link will point to
-pub fn sync<'a>(src: &'a Path, target: &'a str, resolver: ConflictResolver) -> DirContent<'a> {
+pub fn sync(src: &Path, target: &str, resolver: ConflictResolver) -> DirContent {
 	let target = file_system::to_abs_path(target);
 
 	DirContent {
-		src,
-		target,
+		dir: target,
 		resolver,
 		reader: fs::read_dir(src).expect(&format!("Cannot open dir {}", src.display())),
 	}
