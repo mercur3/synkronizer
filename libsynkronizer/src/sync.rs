@@ -14,7 +14,7 @@ pub enum ConflictResolver {
 
 impl From<&str> for ConflictResolver {
 	fn from(text: &str) -> Self {
-		return match text.to_lowercase().as_ref() {
+		match text.to_lowercase().as_ref() {
 			"prompt" => ConflictResolver::Prompt,
 			"overwrite" => ConflictResolver::Overwrite,
 			"do_nothing" => ConflictResolver::DoNothing,
@@ -22,7 +22,7 @@ impl From<&str> for ConflictResolver {
 				"Cannot instantiate a ConflictResolver. Unknown keyword {}",
 				x
 			),
-		};
+		}
 	}
 }
 
@@ -42,7 +42,7 @@ pub trait Linker {
 	fn prompt_for_overwrite(&self, link: &Link) -> Result<(), String>;
 
 	fn link(&self, link: &Link) -> Result<(), String> {
-		return match link.target.exists() {
+		match link.target.exists() {
 			true => match link.resolver {
 				ConflictResolver::Prompt => self.prompt_for_overwrite(link),
 				ConflictResolver::Overwrite => self.overwrite_link(link),
@@ -52,7 +52,7 @@ pub trait Linker {
 				Ok(_) => Ok(()),
 				_ => Err(String::from("Cannot link")),
 			},
-		};
+		}
 	}
 
 	fn overwrite_link(&self, link: &Link) -> Result<(), String> {
@@ -73,15 +73,14 @@ pub trait Linker {
 			));
 		}
 
-		let result = unix::symlink(src, target);
-		if result.is_err() {
-			return Err(format!(
+		match unix::symlink(src, target) {
+			Ok(()) => Ok(()),
+			Err(_) => Err(format!(
 				"Catastrophic error\nsrc: {}\ntarget: {}",
 				src.display(),
 				target.display()
-			));
+			)),
 		}
-		return Ok(());
 	}
 }
 
@@ -92,10 +91,10 @@ struct CliLinker {
 
 impl CliLinker {
 	pub fn new() -> CliLinker {
-		return CliLinker {
+		CliLinker {
 			stdin: RefCell::new(io::stdin()),
 			stdout: RefCell::new(io::stdout()),
-		};
+		}
 	}
 }
 
@@ -118,7 +117,7 @@ impl Linker for CliLinker {
 			.read_line(&mut buffer)
 			.expect("Cannot read");
 
-		return buffer;
+		buffer
 	}
 
 	fn prompt_for_overwrite(&self, link: &Link) -> Result<(), String> {
@@ -199,7 +198,8 @@ mod test {
 	fn base_paths() -> (String, String) {
 		let target_base = String::from("../app/tests/x/target/");
 		let src_base = expand_tilde("~/code/personal/synkronizer/app/tests/x/src/");
-		return (target_base, src_base.into_owned());
+
+		(target_base, src_base.into_owned())
 	}
 
 	#[test]

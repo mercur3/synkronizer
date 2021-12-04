@@ -5,14 +5,18 @@ use std::path::PathBuf;
 pub fn expand_tilde(s: &str) -> Cow<str> {
 	if s.starts_with('~') {
 		let s = s.replacen('~', &std::env::var("HOME").unwrap(), 1);
-		return Cow::Owned(s);
+
+		Cow::Owned(s)
 	}
-	return Cow::Borrowed(s);
+	else {
+		Cow::Borrowed(s)
+	}
 }
 
 pub fn to_abs_path(s: &str) -> PathBuf {
 	let p = expand_tilde(s);
-	return fs::canonicalize(p.as_ref()).unwrap();
+
+	fs::canonicalize(p.as_ref()).unwrap()
 }
 
 #[cfg(test)]

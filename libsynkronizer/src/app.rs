@@ -27,11 +27,11 @@ impl App {
 		let home = file_system::to_abs_path(&home);
 		let config = file_system::to_abs_path(&config);
 
-		return App {
+		App {
 			home,
 			config,
 			resolver,
-		};
+		}
 	}
 
 	fn parse_file(path: &Path) -> (String, String, sync::ConflictResolver) {
@@ -74,7 +74,7 @@ impl App {
 			}
 		}
 
-		return (home, config, resolver);
+		(home, config, resolver)
 	}
 
 	pub fn sync_home(&self) -> sync::DirContent {
