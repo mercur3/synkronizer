@@ -1,3 +1,4 @@
+use crate::utils::file_system;
 use std::cell::RefCell;
 use std::fs;
 use std::io::{self, Stdin, Stdout, Write};
@@ -136,25 +137,47 @@ impl Linker for CliLinker {
 	}
 }
 
+pub struct DirContent<'a> {
+	src: &'a Path,
+	target: PathBuf,
+	resolver: ConflictResolver,
+	reader: fs::ReadDir,
+}
+
+impl<'a> Iterator for DirContent<'a> {
+	type Item = Link;
+
+	fn next(&mut self) -> Option<Self::Item> {
+		match self.reader.next() {
+			Some(entry) => {
+				let entry = entry.unwrap();
+				let original_location = entry.path();
+				let file_name = &entry.file_name();
+				let new_location = self.target.clone().join(file_name);
+
+				Some(Link {
+					src: original_location,
+					target: new_location,
+					resolver: self.resolver.clone(),
+				})
+			}
+			None => None,
+		}
+	}
+}
+
 /// Syncs files in the `src` to `target`.
 /// `src` has the meaning the path where we will get the link from
 /// `target` has the meaning where the link will point to
-pub fn sync(src: &Path, target: &Path, resolve: ConflictResolver) -> Vec<Link> {
-	return fs::read_dir(src)
-		.expect(&format!("Cannot open dir {}", src.display()))
-		.map(|entry| {
-			let entry = entry.unwrap();
-			let original_location = entry.path();
-			let file_name = &entry.file_name();
-			let new_location = target.clone().join(file_name);
+pub fn sync<'a>(src: &'a Path, target: &'a str, resolver: ConflictResolver) -> DirContent<'a> {
+	let target = file_system::to_abs_path(target);
 
-			Link {
-				src: original_location,
-				target: new_location,
-				resolver: resolve.clone(),
-			}
-		})
-		.collect();
+	DirContent {
+		src,
+		target,
+		resolver,
+		reader: fs::read_dir(src).expect(&format!("Cannot open dir {}", src.display())),
+	}
 }
 
 #[cfg(test)]
@@ -186,13 +209,13 @@ mod test {
 		setup_target_dir();
 
 		let do_nothing_linker = CliLinker::new();
-		let vec = sync(
+		let dir_reader = sync(
 			&Path::new(SRC_PATH),
-			&Path::new(TARGET_PATH),
+			TARGET_PATH,
 			ConflictResolver::DoNothing,
 		);
 
-		for l in vec {
+		for l in dir_reader {
 			do_nothing_linker.link(&l).unwrap();
 		}
 
@@ -219,7 +242,7 @@ mod test {
 		let overwrite_linker = CliLinker::new();
 		let vec = sync(
 			&Path::new(SRC_PATH),
-			&Path::new(TARGET_PATH),
+			TARGET_PATH,
 			ConflictResolver::Overwrite,
 		);
 

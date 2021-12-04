@@ -1,6 +1,5 @@
 use crate::sync;
-use crate::utils;
-use std::borrow::Cow;
+use crate::utils::file_system;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
@@ -25,8 +24,8 @@ impl App {
 			panic!("No config");
 		}
 
-		let home = utils::file_system::to_abs_path(&home);
-		let config = utils::file_system::to_abs_path(&config);
+		let home = file_system::to_abs_path(&home);
+		let config = file_system::to_abs_path(&config);
 
 		return App {
 			home,
@@ -35,9 +34,9 @@ impl App {
 		};
 	}
 
-	fn parse_file(path: &Path) -> (Cow<str>, Cow<str>, sync::ConflictResolver) {
-		let mut home = Cow::Borrowed("");
-		let mut config = Cow::Borrowed("");
+	fn parse_file(path: &Path) -> (String, String, sync::ConflictResolver) {
+		let mut home = String::new();
+		let mut config = String::new();
 		let mut resolver = sync::ConflictResolver::Prompt;
 
 		let file = io::BufReader::new(File::open(path).expect("cannot open file"));
@@ -62,8 +61,8 @@ impl App {
 			}
 
 			match left.as_str() {
-				HOME_KEYWORD => home = Cow::Owned(right),
-				CONFIG_KEYWORD => config = Cow::Owned(right),
+				HOME_KEYWORD => home = String::from(right),
+				CONFIG_KEYWORD => config = String::from(right),
 				CONFILCT_RESOLVER_KEYWORD => {
 					resolver = sync::ConflictResolver::from(right.as_ref())
 				}
@@ -78,19 +77,19 @@ impl App {
 		return (home, config, resolver);
 	}
 
-	pub fn sync_home(&self) -> Vec<sync::Link> {
+	pub fn sync_home(&self) -> sync::DirContent {
 		let src = &self.home;
-		let target = &utils::file_system::to_abs_path("~");
+		let target = "~";
 		let resolver = &self.resolver;
 
-		return sync::sync(src, target, resolver.clone());
+		sync::sync(src, target, resolver.clone())
 	}
 
-	pub fn sync_config(&self) -> Vec<sync::Link> {
+	pub fn sync_config(&self) -> sync::DirContent {
 		let src = &self.config;
-		let target = &utils::file_system::to_abs_path("~/.config");
+		let target = "~/.config";
 		let resolver = &self.resolver;
 
-		return sync::sync(src, target, resolver.clone());
+		sync::sync(src, target, resolver.clone())
 	}
 }
