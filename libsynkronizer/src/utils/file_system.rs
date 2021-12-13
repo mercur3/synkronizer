@@ -3,13 +3,9 @@ use std::fs;
 use std::path::PathBuf;
 
 pub fn expand_tilde(s: &str) -> Cow<str> {
-	if s.starts_with('~') {
-		let s = s.replacen('~', &std::env::var("HOME").unwrap(), 1);
-
-		Cow::Owned(s)
-	}
-	else {
-		Cow::Borrowed(s)
+	match s.starts_with('~') {
+		true => Cow::Owned(s.replacen('~', &std::env::var("HOME").unwrap(), 1)),
+		false => Cow::Borrowed(s),
 	}
 }
 

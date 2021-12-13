@@ -17,12 +17,9 @@ pub struct App {
 impl App {
 	pub fn from_config_file(path: &Path) -> Self {
 		let (home, config, resolver) = App::parse_file(path);
-		if home.is_empty() {
-			panic!("No home");
-		}
-		if config.is_empty() {
-			panic!("No config");
-		}
+
+		assert!(!home.is_empty(), "No home");
+		assert!(!config.is_empty(), "No config");
 
 		let home = file_system::to_abs_path(&home);
 		let config = file_system::to_abs_path(&config);
@@ -53,12 +50,8 @@ impl App {
 			let left = args[..index].trim().to_lowercase();
 			let right = args[index + 1..].trim().to_lowercase();
 
-			if left.is_empty() {
-				panic!("Missing left hand side");
-			}
-			if right.is_empty() {
-				panic!("Missing right hand side");
-			}
+			assert!(!left.is_empty(), "Missing left hand side");
+			assert!(!right.is_empty(), "Missing right hand side");
 
 			match left.as_str() {
 				HOME_KEYWORD => home = String::from(right),
