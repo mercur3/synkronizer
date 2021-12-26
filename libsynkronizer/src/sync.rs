@@ -203,6 +203,11 @@ mod test {
 	}
 
 	#[test]
+	fn test_link() {
+		link_with_do_nothing_conflict_resolver();
+		link_with_overwrite_conflict_resolver();
+	}
+
 	fn link_with_do_nothing_conflict_resolver() {
 		setup_target_dir();
 
@@ -233,7 +238,6 @@ mod test {
 		assert_eq!(&d3, Path::new(&format!("{}{}", src_base, "gamma")));
 	}
 
-	#[test]
 	fn link_with_overwrite_conflict_resolver() {
 		setup_target_dir();
 
