@@ -3,6 +3,7 @@ use crate::utils::file_system;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 
 const HOME_KEYWORD: &str = "home";
 const CONFIG_KEYWORD: &str = "config";
@@ -57,7 +58,8 @@ impl App {
 				HOME_KEYWORD => home = String::from(right),
 				CONFIG_KEYWORD => config = String::from(right),
 				CONFILCT_RESOLVER_KEYWORD => {
-					resolver = sync::ConflictResolver::from(right.as_ref())
+					resolver = sync::ConflictResolver::from_str(right.as_ref())
+						.expect("Cannot instantiate a ConflictResolver.")
 				}
 				_ => {
 					eprintln!("Keyword {} is not known", left);

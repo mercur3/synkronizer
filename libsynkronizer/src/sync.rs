@@ -4,6 +4,7 @@ use std::fs;
 use std::io::{self, Stdin, Stdout, Write};
 use std::os::unix::fs as unix;
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 
 #[derive(Clone)]
 pub enum ConflictResolver {
@@ -12,16 +13,14 @@ pub enum ConflictResolver {
 	DoNothing,
 }
 
-impl From<&str> for ConflictResolver {
-	fn from(text: &str) -> Self {
+impl FromStr for ConflictResolver {
+	type Err = ();
+	fn from_str(text: &str) -> Result<Self, Self::Err> {
 		match text.to_lowercase().as_ref() {
-			"prompt" => ConflictResolver::Prompt,
-			"overwrite" => ConflictResolver::Overwrite,
-			"do_nothing" => ConflictResolver::DoNothing,
-			x => panic!(
-				"Cannot instantiate a ConflictResolver. Unknown keyword {}",
-				x
-			),
+			"prompt" => Ok(ConflictResolver::Prompt),
+			"overwrite" => Ok(ConflictResolver::Overwrite),
+			"do_nothing" => Ok(ConflictResolver::DoNothing),
+			x => Err(()),
 		}
 	}
 }
