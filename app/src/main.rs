@@ -1,4 +1,5 @@
-use libsynkronizer::*;
+use libsynkronizer::app::App;
+use libsynkronizer::sync::{CliLinker, Linker};
 use std::env;
 use std::path::Path;
 
@@ -9,8 +10,17 @@ const HELP_SHORT: &str = "-h";
 fn run(path: &Path) {
 	// TODO uncomment when release
 	// let app = App::from_config_file(path);
-	// app.sync_home();
-	// app.sync_config();
+	// let linker = CliLinker::new();
+
+	// let dir_reader = app.sync_home();
+	// for l in dir_reader {
+	// 	linker.link(&l).unwrap();
+	// }
+
+	// let dir_reader = app.sync_config();
+	// for l in dir_reader {
+	// 	linker.link(&l).unwrap();
+	// }
 }
 
 fn print_help() {

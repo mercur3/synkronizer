@@ -83,7 +83,7 @@ pub trait Linker {
 	}
 }
 
-struct CliLinker {
+pub struct CliLinker {
 	stdin: RefCell<Stdin>,
 	stdout: RefCell<Stdout>,
 }
