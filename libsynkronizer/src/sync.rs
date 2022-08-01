@@ -182,9 +182,6 @@ mod test {
 	use crate::utils::file_system::expand_tilde;
 	use std::process::{Command, Stdio};
 
-	const SRC_PATH: &str = "/home/andri/code/personal/synkronizer/app/tests/x/src";
-	const TARGET_PATH: &str = "/home/andri/code/personal/synkronizer/app/tests/x/target";
-
 	fn setup_target_dir() {
 		Command::new("../app/tests/x/script.sh")
 			.stdout(Stdio::null())
@@ -192,6 +189,13 @@ mod test {
 			.stderr(Stdio::null())
 			.output()
 			.unwrap();
+	}
+
+	fn paths() -> (String, String) {
+		let src = expand_tilde("~/code/personal/synkronizer/app/tests/x/src");
+		let target = expand_tilde("~/code/personal/synkronizer/app/tests/x/target");
+
+		(src.into_owned(), target.into_owned())
 	}
 
 	fn base_paths() -> (String, String) {
@@ -211,11 +215,12 @@ mod test {
 		setup_target_dir();
 
 		let do_nothing_linker = CliLinker::new();
-		dbg!("src: {}", SRC_PATH);
-		dbg!("src: {}", TARGET_PATH);
+		let (src_path, target_path) = paths();
+		dbg!("src: {}", &src_path);
+		dbg!("src: {}", &target_path);
 		let dir_reader = sync(
-			&Path::new(SRC_PATH),
-			TARGET_PATH,
+			&Path::new(&src_path),
+			&target_path,
 			ConflictResolver::DoNothing,
 		);
 
@@ -243,9 +248,12 @@ mod test {
 		setup_target_dir();
 
 		let overwrite_linker = CliLinker::new();
+		let (src_path, target_path) = paths();
+		dbg!("src: {}", &src_path);
+		dbg!("src: {}", &target_path);
 		let vec = sync(
-			&Path::new(SRC_PATH),
-			TARGET_PATH,
+			&Path::new(&src_path),
+			&target_path,
 			ConflictResolver::Overwrite,
 		);
 
