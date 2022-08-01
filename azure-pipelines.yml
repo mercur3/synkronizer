@@ -1,0 +1,21 @@
+trigger:
+  - master
+pool:
+  vmImage: ubuntu-latest
+stages:
+  - stage: Test
+    jobs:
+      - job: test_debian_bullseye
+        displayName: Test on Debian Bullseye
+        container: rust:1.62-bullseye
+        steps:
+          - bash: |
+              ./test
+      - job: test_debian_buster
+        displayName: Test on Debian Buster
+        container: rust:1.62-buster
+        steps:
+          - bash: |
+              ./test
+
+
