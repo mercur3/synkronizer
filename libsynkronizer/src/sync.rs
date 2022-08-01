@@ -49,7 +49,10 @@ pub trait Linker {
 			},
 			false => match unix::symlink(&link.src, &link.target) {
 				Ok(_) => Ok(()),
-				_ => Err(String::from("Cannot link")),
+				Err(e) => {
+					eprintln!("{}", e);
+					Err(String::from("Cannot link"))
+				},
 			},
 		}
 	}
