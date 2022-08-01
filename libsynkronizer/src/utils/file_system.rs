@@ -26,7 +26,9 @@ mod test {
 
 	#[test]
 	fn home_is_correct() {
-		assert_eq!(expand_tilde("~"), "/home/andri");
+		let lhs = expand_tilde("~").into_owned();
+		let rhs = std::env::var("HOME").unwrap();
+		assert_eq!(lhs, rhs);
 	}
 }
 
