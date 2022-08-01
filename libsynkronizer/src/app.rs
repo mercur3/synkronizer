@@ -88,3 +88,4 @@ impl App {
 		sync::sync(src, target, resolver.clone())
 	}
 }
+

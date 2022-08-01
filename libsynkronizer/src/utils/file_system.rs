@@ -29,3 +29,4 @@ mod test {
 		assert_eq!(expand_tilde("~"), "/home/andri");
 	}
 }
+

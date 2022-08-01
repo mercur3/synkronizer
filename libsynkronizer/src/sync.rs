@@ -267,3 +267,4 @@ mod test {
 		assert_eq!(&d3, Path::new(&format!("{}{}", src_base, "gamma")));
 	}
 }
+

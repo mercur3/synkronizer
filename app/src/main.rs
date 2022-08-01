@@ -9,18 +9,18 @@ const HELP_SHORT: &str = "-h";
 
 fn run(path: &Path) {
 	// TODO uncomment when release
-	// let app = App::from_config_file(path);
-	// let linker = CliLinker::new();
+	let app = App::from_config_file(path);
+	let linker = CliLinker::new();
 
-	// let dir_reader = app.sync_home();
-	// for l in dir_reader {
-	// 	linker.link(&l).unwrap();
-	// }
+	let dir_reader = app.sync_home();
+	for l in dir_reader {
+		linker.link(&l).unwrap();
+	}
 
-	// let dir_reader = app.sync_config();
-	// for l in dir_reader {
-	// 	linker.link(&l).unwrap();
-	// }
+	let dir_reader = app.sync_config();
+	for l in dir_reader {
+		linker.link(&l).unwrap();
+	}
 }
 
 fn print_help() {
