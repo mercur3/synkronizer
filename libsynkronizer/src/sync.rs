@@ -211,6 +211,8 @@ mod test {
 		setup_target_dir();
 
 		let do_nothing_linker = CliLinker::new();
+		dbg!("src: {}", SRC_PATH);
+		dbg!("src: {}", TARGET_PATH);
 		let dir_reader = sync(
 			&Path::new(SRC_PATH),
 			TARGET_PATH,
