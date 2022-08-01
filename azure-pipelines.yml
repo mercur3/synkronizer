@@ -10,7 +10,7 @@ stages:
         container: rust:1.62-bullseye
         steps:
           - bash: |
-              ./test
+              ./test.sh
       - job: test_debian_buster
         displayName: Test on Debian Buster
         container: rust:1.62-buster
