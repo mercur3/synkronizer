@@ -9,7 +9,7 @@ FILE=~/code/linux-configs
 mkdir -p $FILE
 
 # mount point
-MOUNT=~/code/personal
+MOUNT=~/code/personal/synkronizer
 mkdir -p $MOUNT
 cp -r . $MOUNT
 ls -alh $MOUNT
