@@ -7,5 +7,5 @@ FILE=~/code/linux-configs
 mkdir -p $FILE
 
 # run the tests
-cargo test --all
+RUST_BACkTRACE=1 cargo test --all
 

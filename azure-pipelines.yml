@@ -16,6 +16,6 @@ stages:
         container: rust:1.62-buster
         steps:
           - bash: |
-              ./test
+              ./test.sh
 
 
