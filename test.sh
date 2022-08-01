@@ -12,7 +12,8 @@ mkdir -p $FILE
 MOUNT=~/code/personal/synkronizer
 mkdir -p $MOUNT
 cp -r . $MOUNT
-ls -alh $MOUNT
+cd $MOUNT
+ls -alh .
 
 # run the tests
 # RUST_BACKTRACE=1
