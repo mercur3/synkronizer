@@ -41,19 +41,24 @@ pub trait Linker {
 	fn prompt_for_overwrite(&self, link: &Link) -> Result<(), String>;
 
 	fn link(&self, link: &Link) -> Result<(), String> {
-		match link.target.exists() {
-			true => match link.resolver {
+		let target = &link.target;
+		if target.exists() {
+			println!("Target file {} exists. Proceeding with conflict resolver.", target.display());
+			match link.resolver {
 				ConflictResolver::Prompt => self.prompt_for_overwrite(link),
 				ConflictResolver::Overwrite => self.overwrite_link(link),
 				ConflictResolver::DoNothing => Ok(()),
-			},
-			false => match unix::symlink(&link.src, &link.target) {
+			}
+		}
+		else {
+			println!("Target file {} does not exists. Creating new link.", target.display());
+			match unix::symlink(&link.src, &link.target) {
 				Ok(_) => Ok(()),
 				Err(e) => {
 					eprintln!("{}", e);
 					Err(String::from("Cannot link"))
-				},
-			},
+				}
+			}
 		}
 	}
 
@@ -63,11 +68,9 @@ pub trait Linker {
 
 		if target.is_file() {
 			fs::remove_file(target).unwrap();
-		}
-		else if link.target.is_dir() {
+		} else if link.target.is_dir() {
 			fs::remove_dir_all(target).unwrap();
-		}
-		else {
+		} else {
 			return Err(format!(
 				"Catastrophic error\nsrc: {}\ntarget: {}",
 				src.display(),
@@ -280,4 +283,3 @@ mod test {
 		assert_eq!(&d3, Path::new(&format!("{}{}", src_base, "gamma")));
 	}
 }
-
