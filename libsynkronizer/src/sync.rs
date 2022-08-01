@@ -15,6 +15,7 @@ pub enum ConflictResolver {
 
 impl FromStr for ConflictResolver {
 	type Err = ();
+
 	fn from_str(text: &str) -> Result<Self, Self::Err> {
 		match text.to_lowercase().as_ref() {
 			"prompt" => Ok(ConflictResolver::Prompt),
@@ -43,7 +44,10 @@ pub trait Linker {
 	fn link(&self, link: &Link) -> Result<(), String> {
 		let target = &link.target;
 		if target.exists() {
-			println!("Target file {} exists. Proceeding with conflict resolver.", target.display());
+			println!(
+				"Target file {} exists. Proceeding with conflict resolver.",
+				target.display()
+			);
 			match link.resolver {
 				ConflictResolver::Prompt => self.prompt_for_overwrite(link),
 				ConflictResolver::Overwrite => self.overwrite_link(link),
@@ -51,7 +55,10 @@ pub trait Linker {
 			}
 		}
 		else {
-			println!("Target file {} does not exists. Creating new link.", target.display());
+			println!(
+				"Target file {} does not exists. Creating new link.",
+				target.display()
+			);
 			match unix::symlink(&link.src, &link.target) {
 				Ok(_) => Ok(()),
 				Err(e) => {
@@ -68,9 +75,11 @@ pub trait Linker {
 
 		if target.is_file() {
 			fs::remove_file(target).unwrap();
-		} else if link.target.is_dir() {
+		}
+		else if link.target.is_dir() {
 			fs::remove_dir_all(target).unwrap();
-		} else {
+		}
+		else {
 			return Err(format!(
 				"Catastrophic error\nsrc: {}\ntarget: {}",
 				src.display(),
