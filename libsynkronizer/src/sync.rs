@@ -213,82 +213,64 @@ mod test {
 		(src.into_owned(), target.into_owned())
 	}
 
-	fn base_paths() -> (String, String) {
-		let target_base = String::from("../app/tests/x/target/");
-		let src_base = expand_tilde("~/code/personal/synkronizer/app/tests/x/src/");
-
-		(target_base, src_base.into_owned())
-	}
-
 	#[test]
 	fn test_link() {
-		link_with_do_nothing_conflict_resolver();
-		link_with_overwrite_conflict_resolver();
+		let (src_path, target_path) = paths();
+
+		setup_target_dir();
+		link_with_do_nothing_conflict_resolver(&src_path, &target_path);
+
+		setup_target_dir();
+		link_with_overwrite_conflict_resolver(&src_path, &target_path);
 	}
 
-	fn link_with_do_nothing_conflict_resolver() {
-		setup_target_dir();
-
+	fn link_with_do_nothing_conflict_resolver(src_path: &str, target_path: &str) {
 		let do_nothing_linker = CliLinker::new();
-		let (src_path, target_path) = paths();
-		dbg!("src: {}", &src_path);
-		dbg!("src: {}", &target_path);
 		let dir_reader = sync(
-			&Path::new(&src_path),
-			&target_path,
+			&Path::new(src_path),
+			target_path,
 			ConflictResolver::DoNothing,
 		);
 
-		for l in dir_reader {
-			do_nothing_linker.link(&l).unwrap();
-		}
+		dir_reader.for_each(|el| do_nothing_linker.link(&el).unwrap());
 
-		let (target_base, src_base) = base_paths();
-		let f1 = fs::read_link(Path::new(&format!("{}{}", target_base, 1)));
-		let f2 = fs::read_link(Path::new(&format!("{}{}", target_base, 2)));
-		let f3 = fs::read_link(Path::new(&format!("{}{}", target_base, 3))).unwrap();
-		let d1 = fs::read_link(Path::new(&format!("{}{}", target_base, "alpha"))).unwrap();
-		let d2 = fs::read_link(Path::new(&format!("{}{}", target_base, "beta"))).unwrap();
-		let d3 = fs::read_link(Path::new(&format!("{}{}", target_base, "gamma"))).unwrap();
+		let f1 = fs::read_link(Path::new(&format!("{}{}", target_path, 1)));
+		let f2 = fs::read_link(Path::new(&format!("{}{}", target_path, 2)));
+		let f3 = fs::read_link(Path::new(&format!("{}/{}", target_path, 3))).unwrap();
+		let d1 = fs::read_link(Path::new(&format!("{}/{}", target_path, "alpha"))).unwrap();
+		let d2 = fs::read_link(Path::new(&format!("{}/{}", target_path, "beta"))).unwrap();
+		let d3 = fs::read_link(Path::new(&format!("{}/{}", target_path, "gamma"))).unwrap();
 
 		matches!(f1, Err(_));
 		matches!(f2, Err(_));
-		assert_eq!(&f3, Path::new(&format!("{}{}", src_base, 3)));
-		assert_eq!(&d1, Path::new(&format!("{}{}", src_base, "alpha")));
-		assert_eq!(&d2, Path::new(&format!("{}{}", src_base, "beta")));
-		assert_eq!(&d3, Path::new(&format!("{}{}", src_base, "gamma")));
+		assert_eq!(&f3, Path::new(&format!("{}/{}", src_path, 3)));
+		assert_eq!(&d1, Path::new(&format!("{}/{}", src_path, "alpha")));
+		assert_eq!(&d2, Path::new(&format!("{}/{}", src_path, "beta")));
+		assert_eq!(&d3, Path::new(&format!("{}/{}", src_path, "gamma")));
 	}
 
-	fn link_with_overwrite_conflict_resolver() {
-		setup_target_dir();
-
+	fn link_with_overwrite_conflict_resolver(src_path: &str, target_path: &str) {
 		let overwrite_linker = CliLinker::new();
-		let (src_path, target_path) = paths();
-		dbg!("src: {}", &src_path);
-		dbg!("src: {}", &target_path);
 		let vec = sync(
-			&Path::new(&src_path),
-			&target_path,
+			&Path::new(src_path),
+			target_path,
 			ConflictResolver::Overwrite,
 		);
 
-		for l in vec {
-			overwrite_linker.link(&l).unwrap();
-		}
+		vec.for_each(|el| overwrite_linker.link(&el).unwrap());
 
-		let (target_base, src_base) = base_paths();
-		let f1 = fs::read_link(Path::new(&format!("{}{}", target_base, 1))).unwrap();
-		let f2 = fs::read_link(Path::new(&format!("{}{}", target_base, 2))).unwrap();
-		let f3 = fs::read_link(Path::new(&format!("{}{}", target_base, 3))).unwrap();
-		let d1 = fs::read_link(Path::new(&format!("{}{}", target_base, "alpha"))).unwrap();
-		let d2 = fs::read_link(Path::new(&format!("{}{}", target_base, "beta"))).unwrap();
-		let d3 = fs::read_link(Path::new(&format!("{}{}", target_base, "gamma"))).unwrap();
+		let f1 = fs::read_link(Path::new(&format!("{}/{}", target_path, 1))).unwrap();
+		let f2 = fs::read_link(Path::new(&format!("{}/{}", target_path, 2))).unwrap();
+		let f3 = fs::read_link(Path::new(&format!("{}/{}", target_path, 3))).unwrap();
+		let d1 = fs::read_link(Path::new(&format!("{}/{}", target_path, "alpha"))).unwrap();
+		let d2 = fs::read_link(Path::new(&format!("{}/{}", target_path, "beta"))).unwrap();
+		let d3 = fs::read_link(Path::new(&format!("{}/{}", target_path, "gamma"))).unwrap();
 
-		assert_eq!(&f1, Path::new(&format!("{}{}", src_base, "1")));
-		assert_eq!(&f2, Path::new(&format!("{}{}", src_base, "2")));
-		assert_eq!(&f3, Path::new(&format!("{}{}", src_base, "3")));
-		assert_eq!(&d1, Path::new(&format!("{}{}", src_base, "alpha")));
-		assert_eq!(&d2, Path::new(&format!("{}{}", src_base, "beta")));
-		assert_eq!(&d3, Path::new(&format!("{}{}", src_base, "gamma")));
+		assert_eq!(&f1, Path::new(&format!("{}/{}", src_path, "1")));
+		assert_eq!(&f2, Path::new(&format!("{}/{}", src_path, "2")));
+		assert_eq!(&f3, Path::new(&format!("{}/{}", src_path, "3")));
+		assert_eq!(&d1, Path::new(&format!("{}/{}", src_path, "alpha")));
+		assert_eq!(&d2, Path::new(&format!("{}/{}", src_path, "beta")));
+		assert_eq!(&d3, Path::new(&format!("{}/{}", src_path, "gamma")));
 	}
 }
