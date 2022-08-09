@@ -21,7 +21,7 @@ impl FromStr for ConflictResolver {
 			"prompt" => Ok(ConflictResolver::Prompt),
 			"overwrite" => Ok(ConflictResolver::Overwrite),
 			"do_nothing" => Ok(ConflictResolver::DoNothing),
-			x => Err(()),
+			_ => Err(()),
 		}
 	}
 }
