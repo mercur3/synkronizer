@@ -24,6 +24,7 @@ fn file_is_correct() {
 
 	for i in 1..=5 {
 		let file_name = BASE_CORRECT_PATH.replace("{}", &i.to_string());
+		println!("config file: {file_name}");
 		let path = Path::new(&file_name);
 		let x = App::from_config_file(path);
 
