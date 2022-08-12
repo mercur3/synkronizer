@@ -15,5 +15,5 @@ cp -r . $MOUNT
 cd $MOUNT
 ls -alh .
 
-RUSTBACKTRACE=1 cargo test --all -- --nocapture
+RUSTBACKTRACE=1 cargo test --all
 
