@@ -195,15 +195,102 @@ pub fn sync(src: &Path, target: &str, resolver: ConflictResolver) -> DirContent 
 mod test {
 	use super::*;
 	use crate::utils::file_system::expand_tilde;
-	use std::process::{Command, Stdio};
+	// use std::process::{Command, Stdio};
 
-	fn setup_target_dir() {
-		Command::new("../app/tests/x/script.sh")
-			.stdout(Stdio::null())
-			.stdin(Stdio::null())
-			.stderr(Stdio::null())
-			.output()
-			.unwrap();
+	// fn setup_target_dir() {
+	// 	Command::new("../app/tests/x/script.sh")
+	// 		.stdout(Stdio::null())
+	// 		.stdin(Stdio::null())
+	// 		.stderr(Stdio::null())
+	// 		.output()
+	// 		.unwrap();
+	// }
+
+	struct TestDir<'a> {
+		name: PathBuf,
+		files: Vec<TestFile<'a>>,
+	}
+
+	struct TestFile<'a> {
+		name: PathBuf,
+		content: &'a str,
+	}
+
+	impl<'a> TestDir<'a> {
+		fn base(name: &'a str, parent: &'a Path) -> Self {
+			TestDir { name: parent.join(name), files: vec![] }
+		}
+
+		fn add_file(&mut self, name: &'a str, content: &'a str) {
+			let file = TestFile { name: self.name.join(name), content };
+			self.files.push(file);
+		}
+
+		fn build(self) -> io::Result<()> {
+			fs::create_dir(&self.name)?;
+			for el in self.files {
+				el.build()?;
+			}
+
+			Ok(())
+		}
+	}
+
+	impl<'a> TestFile<'a> {
+		fn build(self) -> io::Result<()> {
+			let mut file = fs::File::create(&self.name)?;
+			file.write_all(self.content.as_bytes())?;
+			Ok(())
+		}
+	}
+
+	fn setup_dirs(src: &Path, target: &Path) -> io::Result<()> {
+		if src.exists() {
+			fs::remove_dir_all(src)?;
+		}
+		if target.exists() {
+			fs::remove_dir_all(target)?;
+		}
+
+		fs::create_dir(src)?;
+		fs::create_dir(target)?;
+
+		// src dir
+		let mut alpha = TestDir::base("alpha", src);
+		alpha.add_file("a", "Ut laoreet tristique lectus eget egestas.");
+		alpha.add_file("b", "");
+		alpha.add_file("c", "Donec et mauris in risus convallis tempus.");
+		alpha.build()?;
+
+		let mut beta = TestDir::base("beta", src);
+		beta.add_file("irrelevant.txt", "");
+		beta.build()?;
+
+		let mut gamma = TestDir::base("gamma", src);
+		gamma.add_file("a", "");
+		gamma.build()?;
+
+		let files = [
+			TestFile {name: src.join("1"), content: ""},
+			TestFile {name: src.join("2"), content: "qwerty"},
+			TestFile {name: src.join("3"), content: "In hac habitasse platea dictumst."},
+		];
+		for el in files {
+			el.build()?;
+		}
+
+		// target dir
+		let files = [
+			TestFile {name: target.join("1"), content: ""},
+			TestFile {name: target.join("2"), content: "qwerty"},
+		];
+		for el in files {
+			el.build()?;
+		}
+		unix::symlink(src.join("alpha"), &target.join("alpha"))?;
+		unix::symlink(src.join("3"), &target.join("3"))?;
+
+		Ok(())
 	}
 
 	fn paths() -> (String, String) {
@@ -216,11 +303,13 @@ mod test {
 	#[test]
 	fn test_link() {
 		let (src_path, target_path) = paths();
+		let src = Path::new(&src_path);
+		let target = Path::new(&target_path);
 
-		setup_target_dir();
+		setup_dirs(src, target).unwrap();
 		link_with_do_nothing_conflict_resolver(&src_path, &target_path);
 
-		setup_target_dir();
+		setup_dirs(src, target).unwrap();
 		link_with_overwrite_conflict_resolver(&src_path, &target_path);
 	}
 
