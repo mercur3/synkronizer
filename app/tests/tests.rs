@@ -40,7 +40,7 @@ fn file_is_correct() {
 				let _actual = &actual_resolvers[i];
 				matches!(expected, _actual);
 			}
-		}
+		},
 		Err(x) => eprintln!("\n\nError:\n{x}\n\n"),
 	}
 }
