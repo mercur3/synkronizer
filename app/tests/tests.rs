@@ -2,8 +2,8 @@ use libsynkronizer::app::App;
 use libsynkronizer::sync::ConflictResolver;
 use std::path::Path;
 
-const BASE_CORRECT_PATH: &str = "../app/tests/files/correct/config{}.txt";
-const BASE_INVALID_PATH: &str = "../app/tests/files/invalid/err{}.txt";
+const BASE_CORRECT_PATH: &str = "tests/files/correct/config{}.txt";
+const BASE_INVALID_PATH: &str = "tests/files/invalid/err{}.txt";
 
 #[test]
 fn file_is_correct() {
