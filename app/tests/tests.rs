@@ -41,7 +41,7 @@ fn file_is_correct() {
 				matches!(expected, _actual);
 			}
 		},
-		Err(x) => eprintln!("\n\nError:\n{x}\n\n"),
+		Err(x) => panic!("\n\nError:\n{}\n\n", x),
 	}
 }
 
