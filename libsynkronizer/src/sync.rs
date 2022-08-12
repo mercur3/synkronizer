@@ -218,11 +218,17 @@ mod test {
 
 	impl<'a> TestDir<'a> {
 		fn base(name: &'a str, parent: &'a Path) -> Self {
-			TestDir { name: parent.join(name), files: vec![] }
+			TestDir {
+				name: parent.join(name),
+				files: vec![],
+			}
 		}
 
 		fn add_file(&mut self, name: &'a str, content: &'a str) {
-			let file = TestFile { name: self.name.join(name), content };
+			let file = TestFile {
+				name: self.name.join(name),
+				content,
+			};
 			self.files.push(file);
 		}
 
@@ -271,9 +277,18 @@ mod test {
 		gamma.build()?;
 
 		let files = [
-			TestFile {name: src.join("1"), content: ""},
-			TestFile {name: src.join("2"), content: "qwerty"},
-			TestFile {name: src.join("3"), content: "In hac habitasse platea dictumst."},
+			TestFile {
+				name: src.join("1"),
+				content: "",
+			},
+			TestFile {
+				name: src.join("2"),
+				content: "qwerty",
+			},
+			TestFile {
+				name: src.join("3"),
+				content: "In hac habitasse platea dictumst.",
+			},
 		];
 		for el in files {
 			el.build()?;
@@ -281,8 +296,14 @@ mod test {
 
 		// target dir
 		let files = [
-			TestFile {name: target.join("1"), content: ""},
-			TestFile {name: target.join("2"), content: "qwerty"},
+			TestFile {
+				name: target.join("1"),
+				content: "",
+			},
+			TestFile {
+				name: target.join("2"),
+				content: "qwerty",
+			},
 		];
 		for el in files {
 			el.build()?;

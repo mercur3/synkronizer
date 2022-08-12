@@ -2,42 +2,46 @@ use libsynkronizer::app::App;
 use libsynkronizer::sync::ConflictResolver;
 use std::path::Path;
 
-const BASE_CORRECT_PATH: &str = "tests/files/correct/config{}.txt";
-const BASE_INVALID_PATH: &str = "tests/files/invalid/err{}.txt";
+const BASE_CORRECT_PATH: &str = "./tests/files/correct/config{}.txt";
+const BASE_INVALID_PATH: &str = "./tests/files/invalid/err{}.txt";
 
 #[test]
 fn file_is_correct() {
 	let path = BASE_CORRECT_PATH.replace("{}", "");
-	let path = Path::new(&path);
-	let base_config = App::from_config_file(path);
+	match std::fs::canonicalize(&path) {
+		Ok(path) => {
+			let base_config = App::from_config_file(&path);
 
-	let expected_resolvers = vec![
-		ConflictResolver::Prompt,
-		ConflictResolver::Prompt,
-		ConflictResolver::DoNothing,
-		ConflictResolver::Overwrite,
-		ConflictResolver::DoNothing,
-		ConflictResolver::DoNothing,
-	];
-	let mut actual_resolvers = Vec::with_capacity(6);
-	actual_resolvers.push(base_config.resolver);
+			let expected_resolvers = vec![
+				ConflictResolver::Prompt,
+				ConflictResolver::Prompt,
+				ConflictResolver::DoNothing,
+				ConflictResolver::Overwrite,
+				ConflictResolver::DoNothing,
+				ConflictResolver::DoNothing,
+			];
+			let mut actual_resolvers = Vec::with_capacity(6);
+			actual_resolvers.push(base_config.resolver);
 
-	for i in 1..=5 {
-		let file_name = BASE_CORRECT_PATH.replace("{}", &i.to_string());
-		println!("config file: {file_name}");
-		let path = Path::new(&file_name);
-		let x = App::from_config_file(path);
+			for i in 1..=5 {
+				let file_name = BASE_CORRECT_PATH.replace("{}", &i.to_string());
+				println!("config file: {file_name}");
+				let path = Path::new(&file_name);
+				let x = App::from_config_file(path);
 
-		actual_resolvers.push(x.resolver);
+				actual_resolvers.push(x.resolver);
 
-		assert_eq!(base_config.home, x.home);
-		assert_eq!(base_config.config, x.config);
-	}
+				assert_eq!(base_config.home, x.home);
+				assert_eq!(base_config.config, x.config);
+			}
 
-	for i in 0..6 {
-		let expected = &expected_resolvers[i];
-		let _actual = &actual_resolvers[i];
-		matches!(expected, _actual);
+			for i in 0..6 {
+				let expected = &expected_resolvers[i];
+				let _actual = &actual_resolvers[i];
+				matches!(expected, _actual);
+			}
+		}
+		Err(x) => eprintln!("{x}"),
 	}
 }
 
