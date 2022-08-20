@@ -53,8 +53,13 @@ is used to resolve that conflict.
 *** UI
 For the moment only a command line version is supported. GTK version is in TODO.
 
+** Testing
+Testing requires source code to be mounted to a certain directory and a specific directory with
+subdirectories to exists. Refer to [[file:test.sh][test.sh]] for the specific locations.
+
 ** Notes
-1. Files which have [[file:tests/files/correct/config5.txt][spaces in their name]].
+1. Files which have [[file:app/tests/files/correct/config5.txt][spaces in their name]].
 2. In case when you don't want to sync =~/= or =~/.config= modify the source code and do not call
-   =App::sync_[home|config]()=
+   =App::sync_[home|config]()=.
 3. Config file uses =DO_NOTHING= to refer to =libsynkronizer::sync::ConflictResolver::DoNothing=.
+
