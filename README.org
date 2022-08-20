@@ -32,8 +32,8 @@ Example:
 *** Config file
 - By default searches at =./config.txt=.
 - Empty lines (or lines that contain only whitespace characters) and lines that begin with =#=
-  are ignored. This definition extends in [[file:tests/files/correct/config3.txt][this extreme case]] too.
-- The valid options (casing [[file:tests/files/correct/config2.txt][ignored]]) that can appear in the left hand side are:
+  are ignored. This definition extends in [[file:app/tests/files/correct/config3.txt][this extreme case]] too.
+- The valid options (casing [[file:app/tests/files/correct/config2.txt][ignored]]) that can appear in the left hand side are:
   + =HOME= - which corresponds to files and directories inside =~/=, except =~/.config=.
   + =CONFIG= - which corresponds to =~/.config=.
   + =CONFLICT_RESOLVER= - set by default as =PROMP=. Other possibilities include: =OVERWRITE=
