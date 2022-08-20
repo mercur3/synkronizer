@@ -8,7 +8,7 @@ const BASE_INVALID_PATH: &str = "./tests/files/invalid/err{}.txt";
 #[test]
 fn file_is_correct() {
 	let path = BASE_CORRECT_PATH.replace("{}", "");
-	eprintln!("{}", std::fs::canonicalize(&path).unwrap().display());
+
 	match std::fs::canonicalize(&path) {
 		Ok(path) => {
 			let base_config = App::from_config_file(&path);
