@@ -6,7 +6,8 @@ pwd
 
 # create a file used for testing
 FILE=~/code/linux-configs
-mkdir -p $FILE
+mkdir -p "$FILE/home"
+mkdir -p "$FILE/config"
 
 # mount point
 MOUNT=~/code/personal/synkronizer
