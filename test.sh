@@ -15,5 +15,5 @@ cp -r . $MOUNT
 cd $MOUNT
 ls -alh .
 
-RUST_BACKTRACE=1 cargo test -- --all --no-fail-fast
+RUST_BACKTRACE=1 cargo test -- --workspace --no-fail-fast
 
