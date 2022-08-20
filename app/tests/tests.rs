@@ -41,7 +41,7 @@ fn file_is_correct() {
 				let _actual = &actual_resolvers[i];
 				matches!(expected, _actual);
 			}
-		},
+		}
 		Err(x) => panic!("\n\nError:\n{}\n\n", x),
 	}
 }

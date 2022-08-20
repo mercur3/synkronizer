@@ -1,4 +1,4 @@
-use crate::utils::file_system;
+use crate::utils::file_system::*;
 use std::cell::RefCell;
 use std::fs;
 use std::io::{self, Stdin, Stdout, Write};
@@ -182,7 +182,7 @@ impl Iterator for DirContent {
 /// `src` has the meaning the path where we will get the link from
 /// `target` has the meaning where the link will point to
 pub fn sync(src: &Path, target: &str, resolver: ConflictResolver) -> DirContent {
-	let target = file_system::to_abs_path(target);
+	let target = to_abs_path(target).expect(&format!("Cannot resolve path to {}", target));
 
 	DirContent {
 		dir: target,
@@ -194,7 +194,6 @@ pub fn sync(src: &Path, target: &str, resolver: ConflictResolver) -> DirContent 
 #[cfg(test)]
 mod test {
 	use super::*;
-	use crate::utils::file_system::expand_tilde;
 	// use std::process::{Command, Stdio};
 
 	// fn setup_target_dir() {

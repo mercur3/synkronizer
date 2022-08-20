@@ -9,10 +9,9 @@ pub fn expand_tilde(s: &str) -> Cow<str> {
 	}
 }
 
-pub fn to_abs_path(s: &str) -> PathBuf {
+pub fn to_abs_path(s: &str) -> std::io::Result<PathBuf> {
 	let p = expand_tilde(s);
-
-	fs::canonicalize(p.as_ref()).unwrap()
+	fs::canonicalize(p.as_ref())
 }
 
 #[cfg(test)]
@@ -21,7 +20,7 @@ mod test {
 
 	#[test]
 	fn file_exists() {
-		to_abs_path("~/code/linux-configs/");
+		let _ = to_abs_path("~/code/linux-configs/").unwrap();
 	}
 
 	#[test]

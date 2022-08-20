@@ -1,5 +1,5 @@
 use crate::sync;
-use crate::utils::file_system;
+use crate::utils::file_system::to_abs_path;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
@@ -22,8 +22,9 @@ impl App {
 		assert!(!home.is_empty(), "No home");
 		assert!(!config.is_empty(), "No config");
 
-		let home = file_system::to_abs_path(&home);
-		let config = file_system::to_abs_path(&config);
+		let home = to_abs_path(&home).expect(&format!("Cannot resolve absolute path to {}", home));
+		let config =
+			to_abs_path(&config).expect(&format!("Cannot resolve absolute path to {}", config));
 
 		App {
 			home,
