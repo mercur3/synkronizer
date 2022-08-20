@@ -1,3 +1,5 @@
+#+HTML: <a href="https://gitlab.com/mercur3/synkronizer"><img src="https://dev.azure.com/andrireveli/synkronizer/_apis/build/status/mercur3.synkronizer?branchName=master"></a>
+
 * synkronizer
 Like GNU Stow but written in Rust.
 ** Aim
