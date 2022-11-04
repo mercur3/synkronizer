@@ -7,13 +7,13 @@ stages:
     jobs:
       - job: test_debian_bullseye
         displayName: Test on Debian Bullseye
-        container: rust:1.63-bullseye
+        container: rust:1.65-bullseye
         steps:
           - bash: |
               ./test.sh
       - job: test_debian_buster
         displayName: Test on Debian Buster
-        container: rust:1.63-buster
+        container: rust:1.65-buster
         steps:
           - bash: |
               ./test.sh
