@@ -4,6 +4,7 @@
   "packageRules": {
       "automerge": false
   },
-  "assignees": ["mercur3"]
+  "assignees": ["mercur3"],
+  "dependencyDashboard": false
 }
 
